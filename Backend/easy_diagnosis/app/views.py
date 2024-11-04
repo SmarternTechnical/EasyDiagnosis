@@ -1,9 +1,43 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from .models import MedicalServiceCategory, PharmaSupport  
+from .models import MedicalServiceCategory, PharmaSupport, UserAccount
 import csv
 from io import TextIOWrapper
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import UserAccountSerializer
+from django.contrib.auth.hashers import make_password, check_password
+
+
+class SignUpView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if UserAccount.objects.filter(email=email).exists():
+            return Response({"message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_account = UserAccount(email=email, password=make_password(password))
+        user_account.save()
+
+        return Response({"message": "Account has been created"}, status=status.HTTP_201_CREATED)
+
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        try:
+            user_account = UserAccount.objects.get(email=email)
+        except UserAccount.DoesNotExist:
+            return Response({"message": "Invalid email or password"}, status=status.HTTP_404_NOT_FOUND)
+
+        if check_password(password, user_account.password):
+            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def upload_csv_and_replace_table(request):
