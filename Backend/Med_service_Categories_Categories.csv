@@ -1,0 +1,41 @@
+Sr. No,name,category,image_path
+1,Cough & Cold,Video Consultation,images/cold_cough.png
+2,Skin Problems,Video Consultation,images/Skin_problem.png
+3,Heart & BP Problems,Video Consultation,images/Heart_BP_problems.png
+4,Respiratory Disorders,Video Consultation,images/Respiratory_disorders.png
+5,Maternity Problems,Video Consultation,images/Maternity_problems.png
+6,Infections & Allergies,Video Consultation,images/infections_allergies.png
+7,Vision Issues,Video Consultation,images/vision_issues.png
+8,Dental Issues,Video Consultation,images/Dental_issues.png
+9,Mental Health Issues,Video Consultation,images/Mental_health_issues.png
+10,Cancer,Video Consultation,images/cancer.png
+11,Period Problems,Video Consultation,images/Periods.png
+12,Stomach Problems,Video Consultation,images/Stomach_problems.png
+13,Hair Problems,Video Consultation,images/Hair_problem.png
+14,Diabetes,Video Consultation,images/Diabetes.png
+15,Physical / Body Pain,Video Consultation,images/Body_Pain.png
+16,Issues in Bed,Video Consultation,images/bed_issues.png
+17,Eye Care Hospital,Search for Hospitals,images/Eye_care_hospital.png
+18,Veterinary Hospital,Search for Hospitals,images/vatenary_hospital.png
+19,Maternity Hospital,Search for Hospitals,images/Maternary_Hospital.png
+20,Pychiatric Hospital,Search for Hospitals,images/Psychiatric_hospital.png
+21,Dental Hospital,Search for Hospitals,images/Dental_Hospital.png
+22,Cancer Treatment Center,Search for Hospitals,images/Cancer_hospital.png
+23,Children Hospital,Search for Hospitals,images/Children_Hospital.png
+24,Cardiac Hospital,Search for Hospitals,images/Cardiac.png
+25,Medicines,Pharma Support,images/Medicines.png
+26,Health Care Devices,Pharma Support,images/HealthCare_devices.png
+27,Mother & Baby Care,Pharma Support,images/Mother_Baby_care.png
+28,Skin Care,Pharma Support,images/Skin_Care.png
+29,Vitamins & Supplements,Pharma Support,images/Vitamins_supplyment.png
+30,Hair Care,Pharma Support,images/hair_care.png
+31,Ayurveda,Pharma Support,images/Ayurveda.png
+32,Sexual Wellness,Pharma Support,images/Sexual_wellness.png
+33,CT Scan,Book Lab Tests,images/CT-Scan.png
+34,Blood Test,Book Lab Tests,images/Blood_test.png
+35,Endoscopy,Book Lab Tests,images/EndoScopy.png
+36,Cardiac Catheterization,Book Lab Tests,images/Cardiac.png
+37,Ultrasound,Book Lab Tests,images/Ultrasound.png
+38,Genetic Testing,Book Lab Tests,images/Genetic_testing.png
+39,Urinalysis,Book Lab Tests,images/Urinananalysis.png
+40,X-Rays,Book Lab Tests,images/X-rays.png
