@@ -21,3 +21,12 @@ class PharmaSupport(models.Model):
 
     def __str__(self):
         return self.product_name
+
+
+
+class UserAccount(models.Model):
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.email
