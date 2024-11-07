@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors
+from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab
 import csv
 from io import TextIOWrapper
 from rest_framework import status
@@ -72,6 +72,10 @@ def upload_csv_and_replace_table(request):
         model = PharmaSupport
     elif table_code == 'doctor':
         model = Doctors
+    elif table_code == 'hospital':
+        model = Hospital
+    elif table_code == 'lab':
+        model = Lab
     else:
         return JsonResponse({"error": "Invalid table_code."}, status=400)
 
@@ -116,6 +120,10 @@ def get_category_details(request):
         model = PharmaSupport
     elif service == 'doctor':
         model = Doctors
+    elif service == 'hospital':
+        model = Hospital
+    elif service == 'lab':
+        model = Lab
     else:
         return JsonResponse({"error": "Invalid service parameter."}, status=400)
 

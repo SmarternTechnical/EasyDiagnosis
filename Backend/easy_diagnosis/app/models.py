@@ -47,3 +47,28 @@ class Doctors(models.Model):
 
     def __str__(self):
         return self.d_name
+
+
+class Hospital(models.Model):
+    h_name = models.CharField(max_length=255, default='Default Name')
+    category = models.CharField(max_length=100)
+    h_image = models.CharField(max_length=255, default=None)
+    specialties = models.CharField(max_length=255, default=None) 
+    location = models.CharField(max_length=255)
+    h_description = models.TextField() 
+    rating = models.FloatField(default=0.0) 
+
+    def __str__(self):
+        return self.h_name
+
+class Lab(models.Model):
+    l_name = models.CharField(max_length=255, default='Default Name')
+    category = models.CharField(max_length=100)
+    l_image = models.CharField(max_length=255, default=None)
+    specialties = models.CharField(max_length=255, default=None) 
+    location = models.CharField(max_length=255)
+    l_description = models.TextField() 
+    rating = models.FloatField(default=0.0) 
+
+    def __str__(self):
+        return self.l_name
