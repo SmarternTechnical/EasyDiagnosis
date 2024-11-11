@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  overflow-x: hidden;
+}
+.custom-shape {
+    border-radius: 0% 100% 61% 39% / 62% 0% 100% 38%;
+  }
+
+/* Apply Poppins font */
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Or apply Nunito font */
+  .font-nunito {
+    font-family: 'Nunito', sans-serif;
+  }
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+  
+  .form-checkbox{
+    background-color: green !important;
+    border: green;
+  }
