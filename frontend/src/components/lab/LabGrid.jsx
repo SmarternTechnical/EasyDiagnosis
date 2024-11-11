@@ -5,7 +5,7 @@ const LabGrid = ({category}) => {
   const [labs,setLabs] = useState([]);
   useEffect(()=>{
     const handleApi = async ()=>{
-      const {data} = await axios.post('http://127.0.0.1:8000/get-category-details/',{
+      const {data} = await axios.post('http://127.0.0.1:8000/get-category-details',{
         service:'lab',
         category: category ||'CT Scan'
       });

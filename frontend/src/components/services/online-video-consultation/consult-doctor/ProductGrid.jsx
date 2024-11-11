@@ -17,7 +17,7 @@ const ProductGrid = ({category}) => {
 
   useEffect(()=>{
     const handleApi = async ()=>{
-      const {data} = await axios.post('http://127.0.0.1:8000/get-category-details/',{
+      const {data} = await axios.post('http://127.0.0.1:8000/get-category-details',{
         service:'doctor',
         category:category
       });

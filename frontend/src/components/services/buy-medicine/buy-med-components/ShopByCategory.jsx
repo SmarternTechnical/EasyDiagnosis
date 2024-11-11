@@ -12,7 +12,7 @@ const ShopByCategory = ({ color, service, category }) => {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "http://127.0.0.1:8000/get-category-details/",
+          "http://127.0.0.1:8000/get-category-details",
           {
             service,
             category,

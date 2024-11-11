@@ -12,7 +12,7 @@ const Specialties = ({ service, category }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.post('http://127.0.0.1:8000/get-category-details/', {
+        const res = await axios.post('http://127.0.0.1:8000/get-category-details', {
           service,
           category,
         });
