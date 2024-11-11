@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab
+from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab, Cart
 import csv
 from io import TextIOWrapper
 from rest_framework import status
@@ -9,20 +9,23 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserAccountSerializer
 from django.contrib.auth.hashers import make_password, check_password
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+import uuid
 
 
 class SignUpView(APIView):
     def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        if UserAccount.objects.filter(email=email).exists():
-            return Response({"message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
-
-        user_account = UserAccount(email=email, password=make_password(password))
-        user_account.save()
-
-        return Response({"message": "Account has been created"}, status=status.HTTP_201_CREATED)
+        serializer = UserAccountSerializer(data=request.data)
+        if serializer.is_valid():
+            user_account = serializer.save()
+            return Response({
+                "message": "Account has been created",
+                "user_id": str(user_account.user_id)
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
     def post(self, request):
@@ -35,9 +38,28 @@ class LoginView(APIView):
             return Response({"message": "Invalid email or password"}, status=status.HTTP_404_NOT_FOUND)
 
         if check_password(password, user_account.password):
-            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user_account)
+            return Response({
+                "message": "Login successful",
+                "user_id": str(user_account.user_id),
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh)
+            }, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            # Blacklist the token to prevent further use
+            refresh_token = request.data.get("refresh_token")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "Invalid token or logout failed"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def upload_csv_and_replace_table(request):
@@ -107,12 +129,14 @@ def upload_csv_and_replace_table(request):
 def get_category_details(request):
     service = request.data.get('service')
     category = request.data.get('category')
+    pid = request.query_params.get('pid')
     
     if not service:
         return JsonResponse({"error": "Service parameter is required."}, status=400)
     if not category:
         return JsonResponse({"error": "Category parameter is required."}, status=400)
 
+    # Map service to the correct model
     model = None
     if service == 'medical_services':
         model = MedicalServiceCategory
@@ -127,9 +151,48 @@ def get_category_details(request):
     else:
         return JsonResponse({"error": "Invalid service parameter."}, status=400)
 
-    matched_entries = model.objects.filter(category=category).values()
-
-    if not matched_entries:
-        return JsonResponse({"error": "No matching entries found for the provided category."}, status=404)
+    # Query based on category and pid
+    if pid:
+        matched_entries = model.objects.filter(category=category, id=pid).values()
+        if not matched_entries:
+            return JsonResponse({"error": "No matching entry found for the provided category and pid."}, status=404)
+    else:
+        matched_entries = model.objects.filter(category=category).values()
+        if not matched_entries:
+            return JsonResponse({"error": "No matching entries found for the provided category."}, status=404)
 
     return JsonResponse(list(matched_entries), safe=False, status=200)
+
+
+
+
+# @api_view(['POST'])
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([IsAuthenticated])
+# def add_to_cart(request):
+#     user = request.data.get('user_id')
+#     product_id = request.data.get('product_id')
+#     print("USER: ",user)
+
+#     # Check if the user already has this product in the cart
+#     cart_item, created = Cart.objects.get_or_create(user=user, p_id=product_id)
+
+#     # Increment the item count by 1
+#     cart_item.item_count += 1
+#     cart_item.save()
+
+#     # Prepare product details to return in the response
+#     product_details = {
+#         "user_id": cart_item.user.user_id,  # Return user_id instead of username
+#         "p_id": cart_item.p_id,
+#         "item_count": cart_item.item_count
+#     }
+
+#     return Response({
+#         "message": "Product added to cart",
+#         "item_count": cart_item.item_count,
+#         "product_details": product_details
+#     }, status=status.HTTP_201_CREATED)
+
+
+
