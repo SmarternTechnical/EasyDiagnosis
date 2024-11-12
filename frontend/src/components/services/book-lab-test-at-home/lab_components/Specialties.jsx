@@ -46,7 +46,7 @@ const Specialties = ({ service, category }) => {
       <div className="flex justify-center">
         <div
           className={`rounded-2xl h-auto w-full max-w-xs mb-4 overflow-hidden shadow-lg transition-all duration-300 transform cursor-pointer hover:scale-105 ${activeStyle}`}
-          onClick={() => handleCardClick(`/services/online-video-consultation/consult-doctor/${item.name}`)} // Use navigation function
+          onClick={() => handleCardClick(`/services/book-lab-tests/Labs/${item.name}`)} // Use navigation function
         >
           {/* Image Container */}
           <div className="relative w-full h-40 rounded-t-2xl overflow-hidden">
