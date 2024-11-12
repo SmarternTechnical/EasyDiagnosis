@@ -12,6 +12,7 @@ import Hospital from "./components/hospital/hospital";
 import LoginPage from "./Authentication/Login";
 import SignUpPage from "./Authentication/SignUp";
 import Lab from "./components/lab/Lab";
+import Labs from "./components/services/book-lab-test-at-home/labs/Labs";
 
 import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
 
@@ -45,7 +46,7 @@ const App = () => {
             path="/services/online-video-consultation/consult-doctor/doctor-details/:label/:id"
             element={<DoctorDetails />}
           />
-          
+          <Route path="/services/book-lab-tests/Labs/:id" element={<Labs />} />
           <Route path="/products/shopping-cart" element={<ShoppingCart />} />
           <Route path="/hospital" element={<Hospital />} />
           <Route path="labs" element={<Lab />} />
