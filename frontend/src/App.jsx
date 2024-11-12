@@ -9,10 +9,11 @@ import ProductViewDetail from "./components/services/products/ProductViewDetail"
 import ShoppingCart from "./components/services/add-to-cart/ShoppingCart";
 import ConsultDoctor from "./components/services/online-video-consultation/consult-doctor/ConsultDoctor";
 import Hospital from "./components/hospital/hospital";
-import MainPage from "./components/services/online-video-consultation/doctor details/mainPage";
 import LoginPage from "./Authentication/Login";
 import SignUpPage from "./Authentication/SignUp";
 import Lab from "./components/lab/Lab";
+
+import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
 
 const App = () => {
   return (
@@ -39,10 +40,12 @@ const App = () => {
             path="/services/online-video-consultation/consult-doctor/:id"
             element={<ConsultDoctor />}
           />
+
           <Route
-            path="/services/online-video-consultation/consult-doctor/doctor-details"
-            element={<MainPage />}
+            path="/services/online-video-consultation/consult-doctor/doctor-details/:label/:id"
+            element={<DoctorDetails />}
           />
+          
           <Route path="/products/shopping-cart" element={<ShoppingCart />} />
           <Route path="/hospital" element={<Hospital />} />
           <Route path="labs" element={<Lab />} />

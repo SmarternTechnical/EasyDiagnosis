@@ -1,6 +1,9 @@
 import React from "react";
 import { MapPin, Star, Bookmark } from "lucide-react";
 import Ling from "../../../../assets/ri_speak-line.png";
+import { useNavigate } from "react-router-dom";
+import { RecoilRoot, atom, useRecoilState } from 'recoil';
+import { doctorCategoryAtom } from "../../../../atoms/FindDoctorAtom";
 
 const ProductCard = ({
   keyy,
@@ -15,8 +18,17 @@ const ProductCard = ({
   experience,
   rating
 }) => {
+  const navigate = useNavigate();
+
+  const handleonClick = ()=>{
+    const encodedLabel = encodeURIComponent(label);
+    
+    // Navigate with both id and label
+    navigate(`/services/online-video-consultation/consult-doctor/doctor-details/${encodedLabel}/${keyy}`);
+  }
   return (
-    <div className="relative bg-white rounded-2xl shadow-md overflow-hidden w-full max-w-[280px] font-inter">
+    
+      <div className="relative bg-white rounded-2xl shadow-md overflow-hidden w-full max-w-[280px] font-inter">
       {/* Product Image with BOOKED Tag */}
       <div className="relative flex justify-center">
         <img src={`/${image}`} alt={name} className="w-full h-32 object-cover" />
@@ -90,7 +102,7 @@ const ProductCard = ({
         )}
       </div>
 
-      <button className="w-full bg-[#FFD43C] text-white py-2 text-sm font-medium rounded-b-lg shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-50">
+      <button className="w-full bg-[#FFD43C] text-white py-2 text-sm font-medium rounded-b-lg shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-50" onClick={handleonClick}>
         VIEW DETAILS
       </button>
     </div>

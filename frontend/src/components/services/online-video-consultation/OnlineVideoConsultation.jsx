@@ -33,7 +33,7 @@ without leaving your house."
             All Offers
           </div>
           <DiscountCarousel />
-          <SpecialtiesCarousel />
+          <SpecialtiesCarousel  />
         </div>
       </div>
     </div>

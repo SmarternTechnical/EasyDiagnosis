@@ -105,7 +105,7 @@ const Services = ({ heading, subHeading, color, service, category }) => {
         <hr className="bg-gray-300 h-1 opacity-35" />
       </div>
 
-      {isPopupOpen && <Popup items={categories} onClose={closePopup} />}
+      {isPopupOpen && <Popup category={category} items={categories} onClose={closePopup} />}
     </div>
   );
 };

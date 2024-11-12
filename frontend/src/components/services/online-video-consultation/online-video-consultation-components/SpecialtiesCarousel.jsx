@@ -26,9 +26,10 @@ const SpecialtiesCarousel = ({ heading, subHeading, color }) => {
         />
       </div>
 
-      {isPopupOpen && <Popup items={categories} onClose={closePopup} />}
+      {isPopupOpen && <Popup category={'Video Consultation'} items={categories} onClose={closePopup} />}
     </div>
   );
 };
 
 export default SpecialtiesCarousel;
+

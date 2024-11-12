@@ -1,97 +1,137 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import slides from '../../../data/MedicalCarouselData';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const ShopByCategory = () => {
+const ShopByCategory = ({ category, service, id }) => {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [categories, setCategories] = useState([]);
+  const [slidesPerView, setSlidesPerView] = useState(calculateSlidesPerView());
+  let namee = category.name;
+
+  // Calculate slides per view based on window width
+  function calculateSlidesPerView() {
+    const width = window.innerWidth;
+    if (width >= 1024) return 6;
+    if (width >= 768) return 4;
+    if (width >= 600) return 3;
+    return 2;
+  }
 
   useEffect(() => {
+    // Fetch categories
+    const fetchData = async () => {
+      try {
+        const res = await axios.post("http://127.0.0.1:8000/get-category-details", {
+          service,
+          category,
+        });
+        setCategories(res.data);
+      } catch (error) {
+        console.error("Error fetching category details:", error);
+      }
+    };
+    fetchData();
+
+    // Handle window resize
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      // Adjust currentIndex when screen size changes to prevent empty slides
-      const slidesToShow = getSlidesToShow();
-      const maxIndex = Math.ceil(slides.length / slidesToShow) - 1;
-      setCurrentIndex(prev => Math.min(prev, maxIndex));
+      setSlidesPerView(calculateSlidesPerView());
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [service, category]);
 
-  const getSlidesToShow = () => {
-    if (windowWidth >= 1024) return 6; // Large screens
-    if (windowWidth >= 768) return 4;  // Medium screens
-    if (windowWidth >= 600) return 3;  // Smaller medium screens
-    return 2;                          // Small screens
-  };
-
-  const slidesPerView = getSlidesToShow();
-  const maxIndex = Math.ceil(slides.length / slidesPerView) - 1;
+  // Calculate max index for carousel
+  const maxIndex = Math.ceil(categories.length / slidesPerView) - 1;
 
   const nextSlide = () => {
-    setCurrentIndex(prev => (prev === maxIndex ? 0 : prev + 1)); // Wrap to first slide
+    setCurrentIndex(prev => (prev === maxIndex ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentIndex(prev => (prev === 0 ? maxIndex : prev - 1)); // Wrap to last slide
+    setCurrentIndex(prev => (prev === 0 ? maxIndex : prev - 1));
   };
 
-  // Get current slide's cards
-  const currentSlideStart = currentIndex * slidesPerView;
-  const currentSlideEnd = currentSlideStart + slidesPerView;
-  const visibleSlides = slides.slice(currentSlideStart, currentSlideEnd);
-
-  const getGridClass = () => {
-    switch (slidesPerView) {
-      case 6:
-        return 'grid-cols-6';
-      case 4:
-        return 'grid-cols-4';
-      case 3:
-        return 'grid-cols-3';
-      default:
-        return 'grid-cols-2';
-    }
-  };
-
-  const Card = ({ slide }) => (
-    <div className="flex justify-center">
-      <div 
-        className={`rounded-2xl w-60 mb-2  overflow-hidden  border border-[#1FAB89] 
-          transition-transform duration-300 transform  cursor-pointer`}
-      >
-        <div className="p-4 ">
-          <h3 className="text-sm text-[#1FAB89]">{slide.title}</h3>
-        </div>
-      </div>
-    </div>
+  // Determine visible categories
+  const visibleCategories = categories.slice(
+    currentIndex * slidesPerView, 
+    (currentIndex + 1) * slidesPerView
   );
 
-  return (
-    <div className="relative w-full max-w-6xl mx-auto px-6">
-      <button
-        onClick={prevSlide}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-      >
-        <ChevronLeft className="w-6 h-6 text-gray-600" />
-      </button>
+  const Card = ({ categoryy }) => {
+    // Check if the category name matches the id prop
+    const isActive = 
+      id && 
+      (categoryy.name.toLowerCase().replace(/\s+/g, '-') === 
+       id.toLowerCase().replace(/\s+/g, '-'));
 
-      <div className="overflow-hidden">
-        <div className="grid gap-4 transition-all duration-500 ease-in-out">
-          <div className={`grid gap-4 ${getGridClass()}`}>
-            {visibleSlides.map((slide, index) => (
-              <Card key={currentSlideStart + index} slide={slide} />
-            ))}
+    // Corrected onClick handler with page reload
+    const handleOnClick = () => {      
+      // Navigate and reload the page
+      navigate(`/services/online-video-consultation/consult-doctor/${categoryy.name}`, {
+        state: { 
+          categoryDetails: categoryy,
+          service: service 
+        }
+      });
+
+      // Reload the page
+      window.location.reload();
+    };
+
+    return (
+      <div 
+        className="flex justify-center" 
+        onClick={handleOnClick}
+      >
+        <div 
+          className={`
+            rounded-2xl w-60 mb-2 overflow-hidden border 
+            transition-all duration-300 transform cursor-pointer
+            ${isActive 
+              ? 'bg-[#1FAB89] text-white border-[#1FAB89]' 
+              : 'border-[#1FAB89] text-[#1FAB89] hover:bg-[#1FAB89]/10'
+            }
+          `}
+        >
+          <div className="p-4">
+            <h3 className={`text-sm ${isActive ? 'text-white' : 'text-[#1FAB89]'}`}>
+              {categoryy.name}
+            </h3>
           </div>
         </div>
       </div>
+    );
+  };
 
-      <button
-        onClick={nextSlide}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-      >
-        <ChevronRight className="w-6 h-6 text-gray-600" />
-      </button>
+  // Only show navigation if more items exist than can be shown
+  const showNavigation = categories.length > slidesPerView;
+
+  return (
+    <div className="relative w-full max-w-6xl mx-auto px-6">
+      {showNavigation && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-600" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-600" />
+          </button>
+        </>
+      )}
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {visibleCategories.map((category, index) => (
+          <Card key={index} categoryy={category} />
+        ))}
+      </div>
     </div>
   );
 };

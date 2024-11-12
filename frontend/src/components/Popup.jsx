@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Search } from 'lucide-react';
 
-const Popup = ({ items, onClose }) => {
+const Popup = ({ category,items, onClose }) => {
   if (!Array.isArray(items)) {
     console.error('Expected items to be an array, but received:', items);
     return null;
   }
-
+  console.log(category);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredItems, setFilteredItems] = useState(items);
   const navigate = useNavigate(); // Initialize navigate function
@@ -40,8 +40,16 @@ const Popup = ({ items, onClose }) => {
   };
 
   // Handle click on an item
-  const handleItemClick = (route) => {
-    navigate(route); // Navigate to the specified route
+  const handleItemClick = (name) => {
+    if(category==='Video Consultation'){
+      navigate(`/services/online-video-consultation/consult-doctor/${name}`);
+    }
+    else if (category==='Pharma Support'){
+      navigate(`/services/buy-medicines/products/${name}`);
+    }
+    else{
+      navigate('');
+    }
     onClose(); // Close the popup
   };
 
@@ -86,7 +94,7 @@ const Popup = ({ items, onClose }) => {
             <div
               key={`/category/${item.id}`}
               className="border shadow-md shadow-[#0000004D] rounded-2xl flex flex-col items-center cursor-pointer"
-              onClick={() => handleItemClick(`/category/${item.id}`)}// Navigate on click
+              onClick={() => handleItemClick(item.name)}// Navigate on click
             >
               <img
                 src={`/${item.image_path}`} 
