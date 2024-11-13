@@ -1,5 +1,5 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-
 
 const mockProduct = {
     category: "Baby Care",
@@ -22,8 +22,10 @@ const mockProduct = {
     storage: "Store at room temperature protected from sunlight, heat, and moisture. Keep it away from the reach to the children and pets. Use this powder before the date of expiry."
   };
   
-const ProductDetails= () => {
+const ProductDetails= ({name,category,product_image, actual_product_price, discounted_price,description}) => {
+  
   const [selectedSize, setSelectedSize] = useState(mockProduct.sizes[0]);
+  
 
   const handleSizeChange = (event) => {
     setSelectedSize(event.target.value);

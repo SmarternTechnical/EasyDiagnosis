@@ -183,8 +183,7 @@ const ProductGrid = ({ category }) => {
   const [sortBy, setSortBy] = useState('relevance');
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [products, setProducts] = useState([]); // Initialize products state with an empty array
-  
+  const [products, setProducts] = useState([]);
   useEffect(() => {
     const handleApi = async () => {
       try {
@@ -192,6 +191,7 @@ const ProductGrid = ({ category }) => {
           service: 'medicines',
           category: category
         });
+        // console.log(data);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching category details:", error);
@@ -283,7 +283,7 @@ const ProductGrid = ({ category }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {currentProducts.map((product) => (
           <ProductCard
-            key={product.id}
+            keyy={product.id}
             image={product.product_image}
             category={product.category}
             name={product.product_name}
