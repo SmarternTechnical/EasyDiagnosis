@@ -78,10 +78,9 @@ class Lab(models.Model):
         return self.l_name
     
 class Cart(models.Model):
-    user_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    p_id = models.CharField(max_length=255, default='0')
-    item_count = models.CharField(max_length=255, default= 0)
-
+    user_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    p_id = models.CharField(max_length=255, default='temporary_default') # Store product_id as a regular CharField
+    item_count = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.user_id
+        return f"User: {self.user_id}, Product: {self.p_id}"

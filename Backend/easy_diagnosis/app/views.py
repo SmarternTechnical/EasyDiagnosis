@@ -165,6 +165,60 @@ def get_category_details(request):
 
 
 
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def add_to_cart(request):
+    user_id = request.data.get('user_id')
+    product_id = request.data.get('product_id')
+
+    # Ensure user_id and product_id are provided
+    if not user_id or not product_id:
+        return Response({"error": "user_id and product_id are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        product = PharmaSupport.objects.get(id=product_id) #empty dict, append, return dict
+    except PharmaSupport.DoesNotExist:
+        return Response({"error": "Product not found in PharmaSupport"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Get or create cart item for the user and product
+    cart_item, created = Cart.objects.get_or_create(user_id=user_id, p_id=product_id)
+
+    if not created:
+        cart_item.item_count += 1
+    else:
+        cart_item.item_count = 1
+
+    cart_item.save()
+    
+    # Retrieve all cart items for the user and prepare product details in a dictionary
+    user_cart_items = Cart.objects.filter(user_id=user_id)
+    cart_details = {}
+
+    for item in user_cart_items:
+        product_info = {
+            "product_name": product.product_name,
+            "category": product.category,
+            "product_image": product.product_image,
+            "actual_product_price": product.actual_product_price,
+            "discounted_price": product.discounted_price,
+            "discount_percentage": product.discount_percentage,
+            "product_link": product.product_link,
+            "description": product.description,
+            "item_count": item.item_count
+        }
+        
+        # Update the cart dictionary with product ID as the key
+        if item.p_id in cart_details:
+            cart_details[item.p_id]["item_count"] += item.item_count  # Increment count if product exists
+        else:
+            cart_details[item.p_id] = product_info  # Add new product to dictionary
+
+    return Response({
+        "message": "Product added to cart",
+        "updated_item_count": cart_item.item_count,
+        "cart": cart_details
+    }, status=status.HTTP_201_CREATED)
 
 # @api_view(['POST'])
 # @authentication_classes([JWTAuthentication])
