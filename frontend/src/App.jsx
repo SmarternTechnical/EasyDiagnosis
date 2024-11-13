@@ -9,12 +9,12 @@ import ProductViewDetail from "./components/services/products/ProductViewDetail"
 import ShoppingCart from "./components/services/add-to-cart/ShoppingCart";
 import ConsultDoctor from "./components/services/online-video-consultation/consult-doctor/ConsultDoctor";
 import Hospital from "./components/hospital/hospital";
-import LoginPage from "./Authentication/Login";
-import SignUpPage from "./Authentication/SignUp";
 import Lab from "./components/lab/Lab";
 import Labs from "./components/services/book-lab-test-at-home/labs/Labs";
 
 import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
+import LoginWrapper from "./Authentication/Login";
+import SignUpWrapper from "./Authentication/SignUp";
 
 const App = () => {
   return (
@@ -51,8 +51,8 @@ const App = () => {
           <Route path="/hospital" element={<Hospital />} />
           <Route path="labs" element={<Lab />} />
         </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginWrapper />} />
+        <Route path="/signup" element={<SignUpWrapper />} />
       </Routes>
     </BrowserRouter>
   );

@@ -19,6 +19,7 @@
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.6",
     "recoil": "^0.7.7",
+    "recoil-persist": "^5.1.0",
     "slick-carousel": "^1.8.1",
     "toastify": "^2.0.1"
   },

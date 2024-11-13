@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+// components/Navbar.jsx
+import React, { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isLoggedInAtom } from "../atoms/checkLoggedIn.js";
 import {
   FaShoppingCart,
   FaUserAlt,
   FaBars,
   FaTimes,
   FaChevronDown,
+  FaSignOutAlt,
+  FaUserCircle,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ImageData = [
   {
@@ -25,19 +31,53 @@ const ImageData = [
   { heading: "COVID Care", route: "/services/covid-care" },
 ];
 
+const UserProfile = () => {
+  return (
+    <div className="relative group">
+      <div className="flex items-center space-x-2 cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-[#1fab89] flex items-center justify-center">
+          <FaUserCircle className="text-white text-xl" />
+        </div>
+        <span className="text-gray-700">{"User"}</span>
+      </div>
+
+      {/* Dropdown Menu */}
+      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
+        <div className="px-4 py-2 text-sm text-gray-700 border-b">
+          "abc@gmail.com"
+        </div>
+        <a
+          href="/profile"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
+        >
+          Profile Settings
+        </a>
+        <a
+          href="/orders"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
+        >
+          My Orders
+        </a>
+        <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Navbar = () => {
+  const [isLoggedIn,setIsLoggedIn] = useRecoilState(isLoggedInAtom);
+  // const [userProfile, setUserProfile] = useRecoilState(userProfileAtom);
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   let timeoutId;
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const toggleMobileDropdown = () => {
-    setMobileDropdownOpen(!mobileDropdownOpen);
-  };
+  console.log("navbar", isLoggedIn);
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMobileDropdown = () => setMobileDropdownOpen(!mobileDropdownOpen);
 
   const handleMouseEnter = () => {
     clearTimeout(timeoutId);
@@ -50,6 +90,17 @@ const Navbar = () => {
     }, 200);
   };
 
+  const handleLogout = async() => {
+    const resp = await axios.post("http://127.0.0.1:8000/logout");
+    setIsLoggedIn(false);
+
+    navigate("/");
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
   return (
     <nav className="w-full h-[10%] m-1 p-2">
       <div className="container mx-auto lg:px-20 py-3 flex justify-between items-center">
@@ -58,7 +109,7 @@ const Navbar = () => {
           LOGO
         </div>
 
-        {/* Menu for larger screens */}
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6 md:text-lg">
           <NavLink
             to="/"
@@ -68,38 +119,23 @@ const Navbar = () => {
           >
             Home
           </NavLink>
-          <NavLink
-            to="/appointments"
-            className={({ isActive }) =>
-              isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-            }
-          >
-            Appointments
-          </NavLink>
 
-          {/* Services with dropdown */}
+          {/* Services Dropdown */}
           <div
-            className="relative cursor-pointer"
+            className="relative"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <NavLink
-              to="/services"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-[#1fab89] font-bold flex items-center"
-                  : "text-gray-600 flex items-center"
-              }
-            >
+            <button className="flex items-center text-gray-600">
               Services <FaChevronDown className="ml-1" />
-            </NavLink>
+            </button>
             {showDropdown && (
-              <div className="absolute top-full mt-2 w-48 bg-white shadow-lg rounded-md z-50">
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                 {ImageData.map((item) => (
                   <NavLink
                     key={item.route}
                     to={item.route}
-                    className="block px-4 py-2 text-gray-700 hover:bg-[#1fab89] hover:text-white"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
                   >
                     {item.heading}
                   </NavLink>
@@ -109,37 +145,47 @@ const Navbar = () => {
           </div>
 
           <NavLink
-            to="/hospital"
+            to="/appointments"
             className={({ isActive }) =>
               isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
             }
           >
-            Hospitals
-          </NavLink>
-          <NavLink
-            to="/emergency"
-            className={({ isActive }) =>
-              isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-            }
-          >
-            Emergency
+            Appointments
           </NavLink>
         </div>
 
-        {/* Cart and Login Button */}
+        {/* Right Side - Cart, Login/Profile */}
         <div className="hidden md:flex items-center space-x-6">
+          {/* Cart */}
           <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1fab89]">
-            <FaShoppingCart className="text-white mx-2 " />
+            <FaShoppingCart className="text-white mx-2" />
           </div>
-          <NavLink to="/login">
-            <button className="flex items-center text-[#1fab89] border-[#1fab89] border-2 px-3 py-2 rounded-full">
-              <FaUserAlt className="mr-1 font-bold" /> Login
+
+          {/* Login/Profile */}
+          {isLoggedIn ? (
+            <>
+              <UserProfile />
+              <button
+                onClick={handleLogout}
+                className="text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center space-x-2"
+              >
+                <FaSignOutAlt />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center space-x-2"
+            >
+              <FaUserAlt />
+              <span>Login</span>
             </button>
-          </NavLink>
+          )}
         </div>
 
-        {/* Hamburger Icon for smaller screens */}
-        <div className="md:hidden flex items-center">
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
           <button onClick={toggleMenu} className="text-[#1fab89]">
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
@@ -149,28 +195,9 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white shadow-md py-4">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
+          <NavLink to="/" className="block px-4 py-2 text-gray-600">
             Home
           </NavLink>
-          <NavLink
-            to="/appointments"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
-            Appointments
-          </NavLink>
-
-          {/* Services Dropdown for Mobile */}
           <div className="px-4 py-2">
             <button
               onClick={toggleMobileDropdown}
@@ -184,7 +211,7 @@ const Navbar = () => {
                   <NavLink
                     key={item.route}
                     to={item.route}
-                    className="block px-4 py-2 text-gray-700 hover:bg-[#1fab89] hover:text-white rounded-md"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
                   >
                     {item.heading}
                   </NavLink>
@@ -192,36 +219,35 @@ const Navbar = () => {
               </div>
             )}
           </div>
+          <NavLink to="/appointments" className="block px-4 py-2 text-gray-600">
+            Appointments
+          </NavLink>
 
-          <NavLink
-            to="/hospitals"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
-            Hospitals
-          </NavLink>
-          <NavLink
-            to="/emergency"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
-            Emergency
-          </NavLink>
-          <div className="flex items-center justify-center space-x-4 mt-4">
-            <FaShoppingCart className="text-[#1fab89]" />
-            <button className="flex items-center text-[#1fab89] border border-[#1fab89] px-3 py-1 rounded-full">
-              <FaUserAlt className="mr-1" /> Login
-            </button>
+          {/* Mobile Auth Section */}
+          <div className="px-4 py-2 border-t">
+            {isLoggedIn ? (
+              <div className="space-y-2">
+                <UserProfile />
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center justify-center space-x-2"
+                >
+                  <FaSignOutAlt />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="w-full text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center justify-center space-x-2"
+              >
+                <FaUserAlt />
+                <span>Login</span>
+              </button>
+            )}
           </div>
         </div>
       )}
-      <hr className="bg-white h-0 md:bg-gray-300 md:h-[0.15rem] md:mx-12 md:mt-1 opacity-35" />
     </nav>
   );
 };

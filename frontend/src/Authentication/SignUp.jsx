@@ -277,4 +277,19 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+import { RecoilRoot } from "recoil";
+
+const SignUpWrapper = () => {
+  return (
+    <div>
+      <RecoilRoot>
+        <SignUpPage/>
+      </RecoilRoot>
+    </div>
+  )
+}
+
+export default SignUpWrapper;
+
+// export default SignUpPage;
+

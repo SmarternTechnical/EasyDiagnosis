@@ -1,17 +1,13 @@
-import React ,{useEffect,useRef,useCallback} from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import { Outlet } from 'react-router-dom'
+import React, { useEffect, useRef, useCallback } from "react";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { Outlet } from "react-router-dom";
 
-import { useLocation } from 'react-router-dom';
-
+import { useLocation } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 const useScrollToTop = (options = {}) => {
-  const { 
-    smooth = true, 
-    additionalSelectors = [],
-    offset = 0 
-  } = options;
+  const { smooth = true, additionalSelectors = [], offset = 0 } = options;
 
   const { pathname } = useLocation();
   const lastPathname = useRef(pathname);
@@ -29,23 +25,25 @@ const useScrollToTop = (options = {}) => {
       window.scrollTo({
         top: 0 + offset,
         left: 0,
-        behavior: smooth ? 'smooth' : 'auto'
+        behavior: smooth ? "smooth" : "auto",
       });
 
       // Reset specific elements
       const elementsToReset = [
-        document.querySelector('#main-content'),
-        ...additionalSelectors.map(selector => document.querySelector(selector))
+        document.querySelector("#main-content"),
+        ...additionalSelectors.map((selector) =>
+          document.querySelector(selector)
+        ),
       ].filter(Boolean); // Remove null elements
 
-      elementsToReset.forEach(el => {
+      elementsToReset.forEach((el) => {
         if (el) {
           el.scrollTop = 0;
         }
       });
 
       // Optional: Improve accessibility
-      const mainContent = document.querySelector('main, #main-content');
+      const mainContent = document.querySelector("main, #main-content");
       if (mainContent) {
         mainContent.focus();
       }
@@ -68,16 +66,18 @@ const useScrollToTop = (options = {}) => {
   }, [pathname, resetScroll]);
 };
 
-
 const AppLayout = () => {
   useScrollToTop();
   return (
-    <div className='overflow-x-hidden min-h-screen flex flex-col scroll-smooth'>
-    <Navbar/>
-    <Outlet/>
-    <Footer/>
-    </div>
-  )
-}
+    <div className="overflow-x-hidden min-h-screen flex flex-col scroll-smooth">
+      <RecoilRoot>
+        <Navbar />
+      </RecoilRoot>
+      <Outlet />
 
-export default AppLayout
+      <Footer />
+    </div>
+  );
+};
+
+export default AppLayout;

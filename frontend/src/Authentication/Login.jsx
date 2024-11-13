@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios"; // Import Axios
+import { RecoilRoot, useRecoilState } from "recoil";
+import { isLoggedInAtom } from "../atoms/checkLoggedIn";
+import { flushSync } from "react-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
+  // const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      // If the user is logged in, navigate to the homepage
+      console.log("User logged in. Redirecting...", isLoggedIn);
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -48,20 +61,41 @@ const LoginPage = () => {
 
     // Call the API after validation using axios
     try {
-      const response = await axios.post("http://127.0.0.1:8000/login/", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/login/",
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 200) {
+        // Improved cookie setting
+        document.cookie = `accessToken=${response.data.access_token}; 
+          path=/; 
+          secure; 
+          sameSite=Strict`;
+
+        document.cookie = `refreshToken=${response.data.refresh_token}; 
+          path=/; 
+          secure; 
+          sameSite=Strict`;
+
+        flushSync(() => {
+          setIsLoggedIn(true);
+        });
+
         toast.success("User found! Redirecting...", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: true,
         });
-        setTimeout(() => {
-          navigate("/")
-        }, 1000)
       } else {
         toast.error("Email not found!", {
           position: "top-right",
@@ -247,4 +281,16 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+const LoginWrapper = () => {
+  return (
+    <div>
+      <RecoilRoot>
+        <LoginPage />
+      </RecoilRoot>
+    </div>
+  );
+};
+
+export default LoginWrapper;
+
+// export default LoginPage;
