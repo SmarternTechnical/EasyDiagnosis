@@ -37,7 +37,7 @@ const ProductCard = ({
       <div className="p-3">
         {/* Product Name, Rating, and Expert */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[#19456B]">
+          <h3 className="text-lg font-semibold text-[#19456B] truncate">
             {name.length < 22 ? name : name.slice(0, 22) + "..."}
           </h3>
         </div>

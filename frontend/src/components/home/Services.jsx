@@ -40,6 +40,12 @@ const Services = ({ heading, subHeading, color, service, category }) => {
     else if (category==='Pharma Support'){
       navigate(`/services/buy-medicines/products/${name}`);
     }
+    else if (category==='Book Lab Tests'){
+      navigate(`/services/book-lab-tests/Labs/${name}`);
+    }
+    else if (category==='Search for Hospitals'){
+      navigate(`/hospital/${name}`);
+    }
     else{
       navigate('');
     }

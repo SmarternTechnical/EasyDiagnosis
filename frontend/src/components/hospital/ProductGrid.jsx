@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-import img from '../../assets/hospital.png'
 import axios from 'axios';
 
 
@@ -11,20 +10,12 @@ const ProductGrid = ({category}) => {
     const handleApi = async ()=>{
       const {data} = await axios.post('http://127.0.0.1:8000/get-category-details',{
         service:'hospital',
-        category: category ||'Eye Care Hospital'
+        category: category
       });
       setHospitals(data);
     }
     handleApi();
   },[]);
-  const products = Array(12).fill({
-    id: 1,
-    image: img,
-    name: "Sparsh Multi-speciality Hospital",
-    location:"Shimla, Himachal Pradesh",
-    rating:"4.3"
-  }).map((product, index) => ({ ...product, id: index + 1 }));
-
 
   return (
     <div className="container mx-auto px-4 py-6">

@@ -430,7 +430,7 @@ const Navbar = () => {
             Appointments
           </NavLink>
           <NavLink
-            to="/hospital"
+            to="/hospital/Eye%20Care%20Hospital"
             className={({ isActive }) =>
               isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
             }

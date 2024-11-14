@@ -48,7 +48,7 @@ const App = () => {
           />
           <Route path="/services/book-lab-tests/Labs/:id" element={<Labs />} />
           <Route path="/products/shopping-cart" element={<ShoppingCart />} />
-          <Route path="/hospital" element={<Hospital />} />
+          <Route path="/hospital/:id" element={<Hospital />} />
           <Route path="labs" element={<Lab />} />
         </Route>
         <Route path="/login" element={<LoginWrapper />} />

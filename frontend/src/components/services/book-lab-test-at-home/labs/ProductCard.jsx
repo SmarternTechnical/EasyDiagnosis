@@ -48,7 +48,7 @@ const ProductCard = ({
       <div className="p-3">
         {/* Product Name and Category */}
         <div className="flex flex-col">
-          <h3 className="text-xl text-[#19456B]">{l_name}</h3>
+          <h3 className="text-xl text-[#19456B] truncate">{l_name}</h3>
           <div className="w-full text-sm py-2">
             <p>{lengthMore ? finalSpec + ` and ${len} more` : specialties}</p>
           </div>

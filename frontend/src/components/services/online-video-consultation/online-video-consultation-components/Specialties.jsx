@@ -89,7 +89,7 @@ const Specialties = ({ service, category }) => {
       </div>
 
       {/* Popup for View All */}
-      {isPopupOpen && <Popup items={categories} onClose={closePopup} />}
+      {isPopupOpen && <Popup category={category} items={categories} onClose={closePopup} />}
     </div>
   );
 };

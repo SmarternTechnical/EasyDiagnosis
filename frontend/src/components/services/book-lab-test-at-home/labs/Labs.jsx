@@ -15,7 +15,8 @@ const Labs = () => {
         />
       </div>
       <div className="w-full mt-10">
-        <ShopByCategory/>
+        <ShopByCategory service="medical_services"
+          category="Book Lab Tests" id={id}/>
       </div>
       <div className="w-3/5 mt-10">
         <ProductGrid category={id}/>

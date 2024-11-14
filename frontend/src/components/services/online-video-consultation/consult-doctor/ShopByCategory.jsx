@@ -96,7 +96,7 @@ const ShopByCategory = ({ category, service, id }) => {
           `}
         >
           <div className="p-4">
-            <h3 className={`text-sm ${isActive ? 'text-white' : 'text-[#1FAB89]'}`}>
+            <h3 className={`text-sm truncate ${isActive ? 'text-white' : 'text-[#1FAB89]'}`}>
               {categoryy.name}
             </h3>
           </div>
