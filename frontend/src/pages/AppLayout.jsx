@@ -4,7 +4,6 @@ import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 
 import { useLocation } from "react-router-dom";
-import { RecoilRoot } from "recoil";
 
 const useScrollToTop = (options = {}) => {
   const { smooth = true, additionalSelectors = [], offset = 0 } = options;
@@ -70,9 +69,7 @@ const AppLayout = () => {
   useScrollToTop();
   return (
     <div className="overflow-x-hidden min-h-screen flex flex-col scroll-smooth">
-      <RecoilRoot>
-        <Navbar />
-      </RecoilRoot>
+          <Navbar />
       <Outlet />
 
       <Footer />

@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios"; // Import Axios
-import { RecoilRoot, useRecoilState } from "recoil";
-import { isLoggedInAtom } from "../atoms/checkLoggedIn";
-import { flushSync } from "react-dom";
+// import { flushSync } from "react-dom";
+
+import UserContext from "../Context/UserContext";
+import isLoggedInContext from "../Context/IsLoggedInContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
-  // const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+  const {isLoggedIn,setIsLoggedIn} = useContext(isLoggedInContext);
+  const {user,setUser} = useContext(UserContext)
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const navigate = useNavigate();
 
@@ -76,26 +77,18 @@ const LoginPage = () => {
       );
 
       if (response.status === 200) {
-        // Improved cookie setting
-        document.cookie = `accessToken=${response.data.access_token}; 
-          path=/; 
-          secure; 
-          sameSite=Strict`;
+        document.cookie = `accessToken=${response.data.access_token}; path=/; secure; sameSite=Strict`;
+        document.cookie = `refreshToken=${response.data.refresh_token}; path=/; secure; sameSite=Strict`;
+        // console.log(response.data.email);
+        const userr = email.split('@')[0];
+        setUser(userr);
+        setIsLoggedIn(true);
 
-        document.cookie = `refreshToken=${response.data.refresh_token}; 
-          path=/; 
-          secure; 
-          sameSite=Strict`;
 
-        flushSync(() => {
-          setIsLoggedIn(true);
-        });
-
-        toast.success("User found! Redirecting...", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: true,
-        });
+        toast.success("Login successful! Redirecting...");
+        setEmail("");
+        setPassword("");
+        console.log(user,isLoggedIn);
       } else {
         toast.error("Email not found!", {
           position: "top-right",
@@ -281,12 +274,19 @@ const LoginPage = () => {
   );
 };
 
+
+  
+
+
+
+
+
+
 const LoginWrapper = () => {
   return (
     <div>
-      <RecoilRoot>
-        <LoginPage />
-      </RecoilRoot>
+          <LoginPage />
+
     </div>
   );
 };
