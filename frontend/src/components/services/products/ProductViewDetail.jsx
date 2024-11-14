@@ -10,10 +10,11 @@ const ProductViewDetail = () => {
   useEffect(()=>{
     const handleApi = async()=>{
       try {
-        const resp = await axios.post(`http://127.0.0.1:8000/get-category-details/?id=${id}`,{
-          service:decodedLabel,
-          category:"Pharma Support"
+        const resp = await axios.post(`http://127.0.0.1:8000/get-category-details?pid=${id}`,{
+          service:'medicines',
+          category:decodedLabel
         })
+        console.log(id);
         console.log(resp);
         setdetails(resp.data[0]);
       } catch (error) {
