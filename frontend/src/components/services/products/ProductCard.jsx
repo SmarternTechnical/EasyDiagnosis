@@ -18,7 +18,7 @@ const ProductCard = ({
   return (
     <div className="relative bg-white rounded-2xl shadow-md overflow-hidden w-full max-w-[250px] text-[#19456b]">
       {/* Product Image */}
-      <Link to={`/services/buy-medicines/products/details/${encodedLabel}/${keyy}"`}>
+      <Link to={`/services/buy-medicines/products/details/${encodedLabel}/${keyy}`}>
         <div className="flex justify-center h-36">
           <img src={`/${image}`} alt={name} className=" w-full h-full rounded-t-lg object-cover object-top" />
         </div>

@@ -67,12 +67,12 @@ const LoginPage = () => {
           email,
           password,
         },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        // {
+        //   withCredentials: true,
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        // }
       );
 
       if (response.status === 200) {

@@ -263,7 +263,7 @@ const ProductCarousel = () => {
                 <div className={`grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4`}>
                   {slideProducts.map((product) => (
                     <ProductCard
-                      key={product.id}
+                      keyy={product.id}
                       image={product.product_image}
                       category={product.category}
                       name={product.product_name}
