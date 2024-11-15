@@ -79,7 +79,7 @@ class Lab(models.Model):
     
 class Cart(models.Model):
     user_id = models.UUIDField(default=uuid.uuid4, editable=False)
-    p_id = models.CharField(max_length=255, default='temporary_default') # Store product_id as a regular CharField
+    p_id = models.CharField(max_length=255, default='temporary_default') 
     item_count = models.IntegerField(default=0)
 
     def __str__(self):
