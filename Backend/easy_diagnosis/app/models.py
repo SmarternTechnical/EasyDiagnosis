@@ -1,4 +1,6 @@
 from django.db import models
+import uuid
+
 
 # Create your models here.
 class MedicalServiceCategory(models.Model):
@@ -25,11 +27,13 @@ class PharmaSupport(models.Model):
 
 
 class UserAccount(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, null=True, editable=False)  # Remove unique=True temporarily
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
 
     def __str__(self):
         return self.email
+
 
 class Doctors(models.Model):
     d_name = models.CharField(max_length=255, default='Default Name')
@@ -72,3 +76,12 @@ class Lab(models.Model):
 
     def __str__(self):
         return self.l_name
+    
+class Cart(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    p_id = models.CharField(max_length=255, default='0')
+    item_count = models.CharField(max_length=255, default= 0)
+
+
+    def __str__(self):
+        return self.user_id
