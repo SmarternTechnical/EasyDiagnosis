@@ -11,9 +11,11 @@ import {
 } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 import isLoggedInContext from "../Context/IsLoggedInContext";
 import UserContext from "../Context/UserContext";
+import UserProfile from "./Navbar/UserProfile";
 
 const ImageData = [
   {
@@ -32,37 +34,6 @@ const ImageData = [
   { heading: "COVID Care", route: "/services/covid-care" },
 ];
 
-const UserProfile = ({ email }) => {
-  return (
-    <div className="relative group">
-      <div className="flex items-center space-x-2 cursor-pointer">
-        <div className="w-8 h-8 rounded-full bg-[#1fab89] flex items-center justify-center">
-          <FaUserCircle className="text-white text-xl" />
-        </div>
-        <span className="text-gray-700">User</span>
-      </div>
-
-      {/* Dropdown Menu */}
-      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
-        <div className="px-4 py-2 text-sm text-gray-700 border-b">
-          {email || "abc@gmail.com"}
-        </div>
-        <NavLink
-          to="/profile"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
-        >
-          Profile Settings
-        </NavLink>
-        <NavLink
-          to="/orders"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
-        >
-          My Orders
-        </NavLink>
-      </div>
-    </div>
-  );
-};
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -93,6 +64,15 @@ const Navbar = () => {
       // await axios.post("http://127.0.0.1:8000/logout");
       setIsLoggedIn(false);
       setUser('');
+      toast.success('Logged out successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       navigate("/");
     } catch (error) {
       console.error("Logout failed", error);
@@ -189,14 +169,7 @@ const Navbar = () => {
           {/* Login/Profile */}
           {isLoggedIn ? (
             <>
-              <UserProfile />
-              <button
-                onClick={handleLogout}
-                className="text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center space-x-2"
-              >
-                <FaSignOutAlt />
-                <span>Logout</span>
-              </button>
+            <UserProfile name={user} handleLogout={handleLogout} />
             </>
           ) : (
             <button
@@ -289,14 +262,7 @@ const Navbar = () => {
           <div className="px-4 py-2 border-t">
             {isLoggedIn ? (
               <div className="space-y-2">
-                <UserProfile />
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center justify-center space-x-2"
-                >
-                  <FaSignOutAlt />
-                  <span>Logout</span>
-                </button>
+                <UserProfile handleLogout={handleLogout} />
               </div>
             ) : (
               <button

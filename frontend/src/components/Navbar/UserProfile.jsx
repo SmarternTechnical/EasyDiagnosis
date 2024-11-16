@@ -13,7 +13,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-const UserProfile = ({ email = "abc@gmail.com", name = "User", handleLogout }) => (
+const UserProfile = ({ email = "abc@gmail.com", name , handleLogout }) => (
   <div className="relative group z-50">
     <div className="flex items-center space-x-3 cursor-pointer">
       <div className="w-10 h-10 rounded-full bg-[#1fab89] flex items-center justify-center hover:bg-[#16a085] transition duration-200">

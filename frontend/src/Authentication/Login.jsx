@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios"; // Import Axios
 // import { flushSync } from "react-dom";
 
@@ -20,7 +20,16 @@ const LoginPage = () => {
   useEffect(() => {
     if (isLoggedIn) {
       // If the user is logged in, navigate to the homepage
-      console.log("User logged in. Redirecting...", isLoggedIn);
+      toast.success('Logged out successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      // console.log("User logged in. Redirecting...", isLoggedIn);
       navigate("/");
     }
   }, [isLoggedIn, navigate]);
@@ -286,7 +295,7 @@ const LoginWrapper = () => {
   return (
     <div>
           <LoginPage />
-
+          <ToastContainer />
     </div>
   );
 };
