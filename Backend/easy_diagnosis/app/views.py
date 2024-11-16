@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab, Cart
+from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab, Cart, Review
 import csv
 from io import TextIOWrapper
 from rest_framework import status
@@ -164,35 +164,81 @@ def get_category_details(request):
     return JsonResponse(list(matched_entries), safe=False, status=200)
 
 
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def add_to_cart(request):
+    user_id = request.user.id
+    product_id = request.data.get('product_id')
+    del_flag=request.data.get('del_one')
+    comp_del=request.data.get('del_full')
 
+    if not user_id or not product_id:
+        return Response({"error": "user_id and product_id are required."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #delete logic
+    if del_flag=="1":
+        #count>1
+        try:
+            cart_item=Cart.objects.get(user_id=user_id,p_id=product_id)
+            if cart_item.item_count>1:
+                cart_item.item_count-=1
+                cart_item.save()
+                message="Product quantity decreased in cart."
+        #coun==1 then delete
+            else:
+                cart_item.delete()
+                message = "Product removed from the cart."
+        except Cart.DoesNotExist:  #item not in cart
+            return Response({"error": "Product not in cart"}, status=status.HTTP_404_NOT_FOUND)
+    elif comp_del=="1":
+        try:
+            cart_item=Cart.objects.get(user_id=user_id,p_id=product_id)
+            cart_item.delete()
+            message = "Product removed from the cart."
+        except Cart.DoesNotExist: 
+            return Response({"error": "Product not in cart"}, status=status.HTTP_404_NOT_FOUND)
+            
+    else: #hit pharma table
+        try:
+            product = PharmaSupport.objects.get(id=product_id) 
+        except PharmaSupport.DoesNotExist:
+            return Response({"error": "Product not found in PharmaSupport"}, status=status.HTTP_404_NOT_FOUND)
+    
+        #add logic
+        # Get or create cart item for the user and product
+        cart_item, created = Cart.objects.get_or_create(user_id=user_id, p_id=product_id)
 
-# @api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
-# def add_to_cart(request):
-#     user = request.data.get('user_id')
-#     product_id = request.data.get('product_id')
-#     print("USER: ",user)
+        if not created:
+            cart_item.item_count += 1
+        else:
+            cart_item.item_count = 1
 
-#     # Check if the user already has this product in the cart
-#     cart_item, created = Cart.objects.get_or_create(user=user, p_id=product_id)
+        cart_item.save()
+        message="Products added in cart"
 
-#     # Increment the item count by 1
-#     cart_item.item_count += 1
-#     cart_item.save()
+    # Retrieve all cart items for the user and prepare product details in a dictionary
+    user_cart_items = Cart.objects.filter(user_id=user_id)
+    cart_details = []
 
-#     # Prepare product details to return in the response
-#     product_details = {
-#         "user_id": cart_item.user.user_id,  # Return user_id instead of username
-#         "p_id": cart_item.p_id,
-#         "item_count": cart_item.item_count
-#     }
+    for item in user_cart_items:
+         product = PharmaSupport.objects.get(id=item.p_id)
 
-#     return Response({
-#         "message": "Product added to cart",
-#         "item_count": cart_item.item_count,
-#         "product_details": product_details
-#     }, status=status.HTTP_201_CREATED)
+         product_details = {
+            "id":item.p_id,
+            "product_name": product.product_name,
+            "item_count": item.item_count,
+            "category": product.category,
+            "product_image": product.product_image,
+            "actual_product_price": product.actual_product_price,
+            "discounted_price": product.discounted_price,
+            "discount_percentage": product.discount_percentage,
+            "product_link": product.product_link,
+            "description": product.description,
+        }
+         cart_details.append(product_details)
 
+        
+    return JsonResponse((cart_details), safe=False, status=200)
 
 
