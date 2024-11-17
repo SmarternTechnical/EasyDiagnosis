@@ -1,5 +1,9 @@
 from django.db import models
 import uuid
+from datetime import datetime
+from datetime import date  # Add this import at the top
+
+
 
 
 # Create your models here.
@@ -85,3 +89,66 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.user_id
+
+class Consultation(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined'),
+        ('scheduled', 'Scheduled'),
+    ]
+
+    u_id = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='user_consultations')
+    d_id = models.ForeignKey(Doctors, on_delete=models.CASCADE, related_name='doctor_consultations')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    date = models.DateField(null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'Consultation {self.id} - {self.status}'
+
+
+
+class UserInfo(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    fathers_name = models.CharField(max_length=100)
+    aadhar_number = models.CharField(max_length=12, unique=True)
+    dob = models.DateField()
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=15)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=6)
+    medical_history_pdf = models.URLField(max_length=255)
+
+    
+    @property
+    def age(self):
+        today = date.today()
+        birth_date = self.dob  # Assuming 'dob' is a DateField in your model
+        age = today.year - birth_date.year
+        if today.month < birth_date.month or (today.month == birth_date.month and today.day < birth_date.day):
+            age -= 1
+        return age
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+class HospitalBooking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    u_id = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='user_hospital_bookings')  # Renamed from user to u_id
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='hospital_bookings')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    appointment_date = models.DateField(null=True, blank=True)
+    appointment_time = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'Booking {self.id} - {self.status} for {self.hospital.h_name}'

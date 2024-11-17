@@ -14,6 +14,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import uuid
+from .models import Consultation
+from .serializers import ConsultationSerializer
+from .models import UserInfo
+from .serializers import  UserInfoSerializer
+from django.utils import timezone
 
 
 class SignUpView(APIView):
@@ -195,4 +200,119 @@ def get_category_details(request):
 #     }, status=status.HTTP_201_CREATED)
 
 
+from .models import UserInfo
+from .serializers import UserInfoSerializer
 
+class AddUserInfoView(APIView):
+
+    def post(self, request):
+        # Automatically associate the logged-in user's ID with the user info
+        data = request.data.copy()
+        data['user_id'] = request.user.id
+
+        serializer = UserInfoSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User information added successfully."}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RequestConsultationView(APIView):
+    def post(self, request):
+        user_id = request.user.id
+        doctor_id = request.data.get('d_id')
+        scheduled_date = request.data.get('scheduled_date')  # Get scheduled date from request
+        scheduled_time = request.data.get('scheduled_time')  # Get scheduled time from request
+
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = UserAccount.objects.get(id=user_id)
+        except UserAccount.DoesNotExist:
+            return Response({"error": "Invalid user ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            doctor = Doctors.objects.get(id=doctor_id)
+        except Doctors.DoesNotExist:
+            return Response({"error": "Invalid doctor ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Assuming there's a UserInfo object related to the UserAccount object
+        try:
+            user_info = UserInfo.objects.get(user_id=user.id)
+        except UserInfo.DoesNotExist:
+            return Response({"error": "User info not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create the consultation
+        consultation = Consultation.objects.create(
+            u_id=user,
+            d_id=doctor,
+            status="pending",
+            date=scheduled_date if scheduled_date else None,  # Assign the scheduled date if provided
+            time=scheduled_time if scheduled_time else None   # Assign the scheduled time if provided
+        )
+        
+        # Serialize the consultation and user info data
+        consultation_serializer = ConsultationSerializer(consultation)
+        user_info_serializer = UserInfoSerializer(user_info)  # Serialize user info
+        
+        # Combine both the consultation and user info in the response
+        return Response({
+            "message": "Consultation request sent.",
+            "consultation": consultation_serializer.data,
+            "user_info": user_info_serializer.data  # Include user info in the response
+        }, status=status.HTTP_201_CREATED)
+
+from .models import  HospitalBooking
+from .serializers import HospitalBookingSerializer
+
+class BookHospitalAppointmentView(APIView):
+    def post(self, request):
+        # Get data from the request
+        user_id = request.user.id
+        hospital_id = request.data.get('h_id')
+        appointment_date = request.data.get('appointment_date')  # Appointment date
+        appointment_time = request.data.get('appointment_time')  # Appointment time
+
+        # Validate that user_id and hospital_id are provided
+        if not user_id or not hospital_id:
+            return Response({"error": "User ID and Hospital ID are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Try to get the User and Hospital from the database
+        try:
+            user = UserAccount.objects.get(id=user_id)
+        except UserAccount.DoesNotExist:
+            return Response({"error": "Invalid user ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            hospital = Hospital.objects.get(id=hospital_id)
+        except Hospital.DoesNotExist:
+            return Response({"error": "Invalid hospital ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Try to get the corresponding UserInfo instance
+        try:
+            user_info = UserInfo.objects.get(user_id=user_id)
+        except UserInfo.DoesNotExist:
+            return Response({"error": "User Info not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create the hospital booking instance
+        # Pass the ForeignKey IDs directly for user and hospital
+        hospital_booking = HospitalBooking.objects.create(
+            u_id=user,  # Pass the user instance, not just the ID
+            hospital=hospital,  # Pass the hospital instance, not just the ID
+            status="pending",  # Default status is "pending"
+            appointment_date=appointment_date if appointment_date else None,  # Assign the appointment date
+            appointment_time=appointment_time if appointment_time else None  # Assign the appointment time
+        )
+
+        # Serialize the hospital booking data
+        hospital_booking_serializer = HospitalBookingSerializer(hospital_booking)
+
+        # Serialize the user info data using the UserInfoSerializer
+        user_info_serializer = UserInfoSerializer(user_info)
+
+        # Return response with booking details and user info
+        return Response({
+            "message": "Hospital appointment booking request sent.",
+            "booking": hospital_booking_serializer.data,
+            "user_info": user_info_serializer.data  # Include user info in the response
+        }, status=status.HTTP_201_CREATED)

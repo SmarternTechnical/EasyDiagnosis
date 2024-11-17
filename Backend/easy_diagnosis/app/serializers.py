@@ -13,3 +13,30 @@ class UserAccountSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
+from .models import UserInfo
+from .models import UserInfo
+from .models import Consultation
+
+
+
+class ConsultationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Consultation
+        fields = ['u_id', 'd_id', 'status', 'date', 'time']
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    age = serializers.ReadOnlyField()
+
+    class Meta:
+        model = UserInfo
+        fields = [
+            'user_id', 'first_name', 'last_name', 'fathers_name', 'aadhar_number',
+            'dob', 'age', 'email', 'phone_number', 'street', 'city', 'state', 
+            'country', 'pincode', 'medical_history_pdf'
+        ]
+from .models import HospitalBooking
+
+class HospitalBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HospitalBooking
+        fields = ['u_id', 'hospital', 'status', 'appointment_date', 'appointment_time']
