@@ -316,3 +316,55 @@ class BookHospitalAppointmentView(APIView):
             "booking": hospital_booking_serializer.data,
             "user_info": user_info_serializer.data  # Include user info in the response
         }, status=status.HTTP_201_CREATED)
+from .models import LabTestBooking, UserAccount, Lab
+from .serializers import LabTestBookingSerializer
+class BookLabTestAppointmentView(APIView):
+    def post(self, request):
+        # Get data from the request
+        user_id = request.user.id
+        lab_id = request.data.get('lab_id')  # Lab ID
+        appointment_date = request.data.get('appointment_date')  # Appointment date
+        appointment_time = request.data.get('appointment_time')  # Appointment time
+
+        # Validate that user_id and lab_id are provided
+        if not user_id or not lab_id:
+            return Response({"error": "User ID and Lab ID are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Try to get the User and Lab from the database
+        try:
+            user = UserAccount.objects.get(id=user_id)
+        except UserAccount.DoesNotExist:
+            return Response({"error": "Invalid user ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            lab = Lab.objects.get(id=lab_id)
+        except Lab.DoesNotExist:
+            return Response({"error": "Invalid lab ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Try to get the corresponding UserInfo instance
+        try:
+            user_info = UserInfo.objects.get(user_id=user_id)
+        except UserInfo.DoesNotExist:
+            return Response({"error": "User Info not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create the lab test booking instance
+        lab_booking = LabTestBooking.objects.create(
+            u_id=user,  # Pass the user instance
+            lab=lab,  # Pass the lab instance
+            status="pending",  # Default status is "pending"
+            appointment_date=appointment_date if appointment_date else None,  # Assign the appointment date
+            appointment_time=appointment_time if appointment_time else None  # Assign the appointment time
+        )
+
+        # Serialize the lab booking data
+        lab_booking_serializer = LabTestBookingSerializer(lab_booking)
+
+        # Serialize the user info data
+        user_info_serializer = UserInfoSerializer(user_info)
+
+        # Return response with booking details and user info
+        return Response({
+            "message": "Lab test appointment booking request sent.",
+            "booking": lab_booking_serializer.data,
+            "user_info": user_info_serializer.data
+        }, status=status.HTTP_201_CREATED)

@@ -152,3 +152,19 @@ class HospitalBooking(models.Model):
 
     def __str__(self):
         return f'Booking {self.id} - {self.status} for {self.hospital.h_name}'
+
+class LabTestBooking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    u_id = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='user_lab_bookings')  # User making the booking
+    lab = models.ForeignKey(Lab, on_delete=models.CASCADE, related_name='lab_bookings')  # The lab for the test
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    appointment_date = models.DateField(null=True, blank=True)  # Appointment date
+    appointment_time = models.TimeField(null=True, blank=True)  # Appointment time
+
+    def __str__(self):
+        return f'Lab Booking {self.id} - {self.status} for {self.lab.name}'

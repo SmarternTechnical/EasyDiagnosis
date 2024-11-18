@@ -40,3 +40,9 @@ class HospitalBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = HospitalBooking
         fields = ['u_id', 'hospital', 'status', 'appointment_date', 'appointment_time']
+from .models import LabTestBooking
+
+class LabTestBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LabTestBooking
+        fields = '__all__'
