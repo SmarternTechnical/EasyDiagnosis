@@ -7,7 +7,7 @@ from io import TextIOWrapper
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserAccountSerializer
+from .serializers import UserAccountSerializer,ReviewSerializer
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -29,6 +29,7 @@ class SignUpView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
+        print(f"Request data: {request.data}") 
         email = request.data.get('email')
         password = request.data.get('password')
 
@@ -47,6 +48,43 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class LoginView(APIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         password = request.data.get('password')
+
+#         try:
+#             user_account = UserAccount.objects.get(email=email)
+#         except UserAccount.DoesNotExist:
+#             return Response({"message": "Invalid email or password"}, status=status.HTTP_404_NOT_FOUND)
+
+#         if check_password(password, user_account.password):
+#             refresh = RefreshToken.for_user(user_account)
+#             access_token = str(refresh.access_token)
+#             refresh_token = str(refresh)
+
+#             # Use JsonResponse to set cookies
+#             response = JsonResponse({
+#                 "message": "Login successful",
+#                 "user_id": str(user_account.user_id),
+#                 # "access_token": str(refresh.access_token),
+#                 # "refresh_token": str(refresh)
+#             })
+            
+#             # Set Secure Cookies
+#             response.set_cookie(
+#                 key='access_token', value=access_token, httponly=True, secure=True, samesite='Strict'
+#             )
+#             response.set_cookie(
+#                 key='refresh_token', value=refresh_token, httponly=True, secure=True, samesite='Strict'
+#             )
+
+#             return response
+#         else:
+#             return Response({"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -242,3 +280,55 @@ def add_to_cart(request):
     return JsonResponse((cart_details), safe=False, status=200)
 
 
+
+
+class ReviewAPI(APIView):
+    def get(self, request):
+
+        #Fetch all reviews with optional filters: category and subcategory_id.
+        category = request.query_params.get('category')  # e.g., 'product', 'hospital'
+        subcategory_id = request.query_params.get('subcategory_id')  # e.g., specific product ID
+
+        reviews = Review.objects.all()
+        if category:
+            reviews = reviews.filter(category=category)
+        if subcategory_id:
+            reviews = reviews.filter(subcategory_id=subcategory_id)
+
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        
+        # Create or update a review. Payload should include:
+        # - category, subcategory_id, review_comment, review_stars
+        
+        if not request.user.is_authenticated:
+            return Response({"error": "User must be authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Extract the data from the request
+        user_id = request.user.id  # Directly fetch user ID from the authenticated user
+        category = request.data.get('category')
+        subcategory_id = request.data.get('subcategory_id')
+        review_comment = request.data.get('review_comment')
+        review_stars = request.data.get('review_stars')
+
+        # Validate required fields
+        if not all([user_id, category, subcategory_id, review_comment, review_stars]):
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create or update the review
+        review, created = Review.objects.update_or_create(
+            user_id=user_id,  # Use user_id directly
+            category=category,
+            subcategory_id=subcategory_id,
+            defaults={
+                'review_comment': review_comment,
+                'review_stars': review_stars,
+            }
+        )
+
+        # Serialize the review object to send as the response
+        serializer = ReviewSerializer(review)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)

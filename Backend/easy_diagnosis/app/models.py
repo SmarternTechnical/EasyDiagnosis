@@ -94,7 +94,8 @@ class Review(models.Model):
         ('doctor', 'Doctor'),
     ]
 
-    user_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    # user_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    user_id = models.IntegerField() 
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     subcategory_id = models.IntegerField()  
     review_comment = models.TextField()
@@ -102,3 +103,4 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.category} Review by {self.user.username}"
+    
