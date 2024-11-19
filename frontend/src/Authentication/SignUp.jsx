@@ -99,7 +99,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row items-center justify-around p-4">
+    <div className="min-h-screen w-full flex flex-col md:flex-row items-center justify-center p-4">
       <div className="w-full md:w-1/2 max-w-lg">
         <div className="bg-[#1fab89] font-bold text-white text-2xl p-2 w-24 mb-5 flex justify-center items-center px-5 ">
           LOGO
