@@ -1,12 +1,9 @@
 from django.db import models
 import uuid
 from datetime import datetime
-from datetime import date  # Add this import at the top
+from datetime import date  
 
 
-
-
-# Create your models here.
 class MedicalServiceCategory(models.Model):
     name = models.CharField(max_length=255, default='Default Name')  
     category = models.CharField(max_length=255)  
@@ -168,3 +165,12 @@ class LabTestBooking(models.Model):
 
     def __str__(self):
         return f'Lab Booking {self.id} - {self.status} for {self.lab.name}'
+
+
+class Cart(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    p_id = models.CharField(max_length=255, default='temporary_default') 
+    item_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"User: {self.user_id}, Product: {self.p_id}"
