@@ -174,3 +174,24 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"User: {self.user_id}, Product: {self.p_id}"
+
+
+class Review(models.Model):
+    CATEGORY_CHOICES = [
+        ('product', 'Product'),
+        ('hospital', 'Hospital'),
+        ('lab', 'Lab'),
+        ('doctor', 'Doctor'),
+    ]
+
+    # user_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    user_id = models.IntegerField() 
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    subcategory_id = models.IntegerField()  
+    review_comment = models.TextField()
+    review_stars = models.IntegerField()  
+    
+    def __str__(self):
+        return f"{self.category} Review by {self.user.username}"
+    
+        return self.user_id

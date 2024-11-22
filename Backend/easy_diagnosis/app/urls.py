@@ -1,10 +1,6 @@
 from django.urls import path
 from . import views
-from .views import SignUpView, LoginView, LogoutView
-from .views import RequestConsultationView
-from .views import AddUserInfoView
-from .views import BookHospitalAppointmentView
-from .views import BookLabTestAppointmentView
+from .views import SignUpView, LoginView, LogoutView,RequestConsultationView,AddUserInfoView,BookHospitalAppointmentView,BookLabTestAppointmentView, ReviewAPI
 
 
 
@@ -19,6 +15,8 @@ urlpatterns = [
     path('request-consultation/', RequestConsultationView.as_view(), name='request-consultation'),
     path('book-hospital-appointment/', BookHospitalAppointmentView.as_view(), name='book_hospital_appointment'),
     path('book-labtest/', BookLabTestAppointmentView.as_view(), name='book-labtest'),
-     path('add-to-cart/', views.add_to_cart, name='add_to_cart'),
+    path('add-to-cart/', views.add_to_cart, name='add_to_cart'),
+     path('reviews/', ReviewAPI.as_view(), name='reviews'),
+
 ]
 

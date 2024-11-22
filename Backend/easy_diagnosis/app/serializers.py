@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from .models import UserAccount
-from .models import UserInfo
-from .models import UserInfo
-from .models import Consultation
+from .models import UserAccount,UserInfo, Consultation, Review
 
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,3 +44,8 @@ class LabTestBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = LabTestBooking
         fields = '__all__'
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__' 

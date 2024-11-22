@@ -19,8 +19,8 @@ from .serializers import ConsultationSerializer
 from .models import UserInfo,HospitalBooking
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
-from .models import LabTestBooking, UserAccount, Lab
-from .serializers import LabTestBookingSerializer, HospitalBookingSerializer
+from .models import LabTestBooking, UserAccount, Lab, Review
+from .serializers import LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer
 
 
 class SignUpView(APIView):
@@ -496,4 +496,55 @@ def add_to_cart(request):
         
     return JsonResponse((cart_details), safe=False, status=200)
 
+
+class ReviewAPI(APIView):
+    def get(self, request):
+
+        #Fetch all reviews with optional filters: category and subcategory_id.
+        category = request.query_params.get('category')  # e.g., 'product', 'hospital'
+        subcategory_id = request.query_params.get('subcategory_id')  # e.g., specific product ID
+
+        reviews = Review.objects.all()
+        if category:
+            reviews = reviews.filter(category=category)
+        if subcategory_id:
+            reviews = reviews.filter(subcategory_id=subcategory_id)
+
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        
+        # Create or update a review. Payload should include:
+        # - category, subcategory_id, review_comment, review_stars
+        
+        if not request.user.is_authenticated:
+            return Response({"error": "User must be authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Extract the data from the request
+        user_id = request.user.id  # Directly fetch user ID from the authenticated user
+        category = request.data.get('category')
+        subcategory_id = request.data.get('subcategory_id')
+        review_comment = request.data.get('review_comment')
+        review_stars = request.data.get('review_stars')
+
+        # Validate required fields
+        if not all([user_id, category, subcategory_id, review_comment, review_stars]):
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create or update the review
+        review, created = Review.objects.update_or_create(
+            user_id=user_id,  # Use user_id directly
+            category=category,
+            subcategory_id=subcategory_id,
+            defaults={
+                'review_comment': review_comment,
+                'review_stars': review_stars,
+            }
+        )
+
+        # Serialize the review object to send as the response
+        serializer = ReviewSerializer(review)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab, Cart
+from .models import MedicalServiceCategory, PharmaSupport, UserAccount, Doctors, Hospital, Lab, Cart,Review
 
 # Register your models here.
 class MedicalServiceCategoryAdmin(admin.ModelAdmin):
@@ -23,6 +23,9 @@ class LabAdmin(admin.ModelAdmin):
 class CartAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Cart._meta.fields]
 
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Review._meta.fields]
+
 admin.site.register(MedicalServiceCategory, MedicalServiceCategoryAdmin)
 admin.site.register(PharmaSupport, PharmaSupportAdmin)
 admin.site.register(UserAccount, UserAccountAdmin)
@@ -30,3 +33,4 @@ admin.site.register(Doctors, DoctorsAdmin)
 admin.site.register(Hospital, HospitalAdmin)
 admin.site.register(Lab, LabAdmin)
 admin.site.register(Cart, CartAdmin)
+admin.site.register(Review, ReviewAdmin)
