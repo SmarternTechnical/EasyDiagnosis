@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import AppLayout from "./pages/AppLayout";
 import Service from "./pages/Service";
@@ -11,13 +17,19 @@ import ConsultDoctor from "./components/services/online-video-consultation/consu
 import Hospital from "./components/hospital/hospital";
 import Lab from "./components/lab/Lab";
 import Labs from "./components/services/book-lab-test-at-home/labs/Labs";
-
 import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
 import LoginWrapper from "./Authentication/Login";
 import SignUpWrapper from "./Authentication/SignUp";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
+const ProtectedRoute = () => {
+  const userCookie = Cookies.get("accessToken");
+  if (!userCookie) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Outlet />;
+};
 const App = () => {
   return (
     <BrowserRouter>
@@ -28,25 +40,12 @@ const App = () => {
             <Route path="*" element={<ServiceRoutes />} />
           </Route>
           <Route
-            path="/services/buy-medicines/products/:id"
-            element={<Products />}
-          />
-          <Route
             path="/services/buy-medicines/products/details/:category/:id"
             element={<ProductViewDetail />}
           />
           <Route
-            path="/services/buy-medicines/products/shopping-cart"
-            element={<ShoppingCart />}
-          />
-          <Route
             path="/services/online-video-consultation/consult-doctor/:id"
             element={<ConsultDoctor />}
-          />
-
-          <Route
-            path="/services/online-video-consultation/consult-doctor/doctor-details/:label/:id"
-            element={<DoctorDetails />}
           />
           <Route path="/services/book-lab-tests/Labs/:id" element={<Labs />} />
           <Route path="/products/shopping-cart" element={<ShoppingCart />} />
@@ -55,6 +54,22 @@ const App = () => {
         </Route>
         <Route path="/login" element={<LoginWrapper />} />
         <Route path="/signup" element={<SignUpWrapper />} />
+        {/* protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/services/online-video-consultation/consult-doctor/doctor-details/:label/:id"
+            element={<DoctorDetails />}
+          />
+          <Route
+            path="/services/buy-medicines/products/shopping-cart"
+            element={<ShoppingCart />}
+          />
+          <Route
+            path="/services/buy-medicines/products/:id"
+            element={<Products />}
+          />
+          {/* add more routes to protect */}
+        </Route>
       </Routes>
       <ToastContainer />
     </BrowserRouter>
