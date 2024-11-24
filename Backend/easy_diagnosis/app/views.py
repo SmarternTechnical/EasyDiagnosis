@@ -16,12 +16,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import uuid
 from .models import Consultation
 from .serializers import ConsultationSerializer
-from .models import UserInfo,HospitalBooking
+from .models import UserInfo,HospitalBooking,Customer, Order
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
-from .models import LabTestBooking, UserAccount, Lab, Review
-from .serializers import LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer
-
+from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order
+from .serializers import LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer
+from rest_framework.generics import ListAPIView,RetrieveAPIView
 
 class SignUpView(APIView):
     def post(self, request):
@@ -333,45 +333,6 @@ class BookLabTestAppointmentView(APIView):
             "booking": lab_booking_serializer.data,
             "user_info": user_info_serializer.data
         }, status=status.HTTP_201_CREATED)
-    
-
-# @api_view(['POST'])
-# def get_category_details(request):
-#     service = request.data.get('service')
-#     category = request.data.get('category')
-#     pid = request.query_params.get('pid')
-    
-#     if not service:
-#         return JsonResponse({"error": "Service parameter is required."}, status=400)
-#     if not category:
-#         return JsonResponse({"error": "Category parameter is required."}, status=400)
-
-#     # Map service to the correct model
-#     model = None
-#     if service == 'medical_services':
-#         model = MedicalServiceCategory
-#     elif service == 'medicines':
-#         model = PharmaSupport
-#     elif service == 'doctor':
-#         model = Doctors
-#     elif service == 'hospital':
-#         model = Hospital
-#     elif service == 'lab':
-#         model = Lab
-#     else:
-#         return JsonResponse({"error": "Invalid service parameter."}, status=400)
-
-#     # Query based on category and pid
-#     if pid:
-#         matched_entries = model.objects.filter(category=category, id=pid).values()
-#         if not matched_entries:
-#             return JsonResponse({"error": "No matching entry found for the provided category and pid."}, status=404)
-#     else:
-#         matched_entries = model.objects.filter(category=category).values()
-#         if not matched_entries:
-#             return JsonResponse({"error": "No matching entries found for the provided category."}, status=404)
-
-#     return JsonResponse(list(matched_entries), safe=False, status=200)
 
 @api_view(['POST'])
 def get_category_details(request):
@@ -548,3 +509,73 @@ class ReviewAPI(APIView):
         status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(serializer.data, status=status_code)
 
+
+
+
+class OrderListView(ListAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        status_filter = self.request.query_params.get('status', None)
+        if status_filter:
+            return Order.objects.filter(status=status_filter)
+        return Order.objects.all()
+
+class OrderDetailView(RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+
+class UploadCSVView(APIView):
+    def post(self, request, *args, **kwargs):
+        csv_file = request.FILES.get('file', None)
+        if not csv_file:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not csv_file.name.endswith('.csv'):
+            return Response({"error": "File is not in CSV format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        data = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(data)
+
+        for row in reader:
+            customer, created = Customer.objects.get_or_create(
+                name=row['customer_name'],
+                email=row['customer_email'],
+                user_id=row['customer_user_id']
+            )
+            Order.objects.create(
+                customer=customer,
+                order_info=row['order_info'],
+                product=row['product'],
+                timeline=row['timeline'],
+                total_cost=row['total_cost'],
+                status=row['status']
+            )
+
+        return Response({"message": "CSV data uploaded successfully"}, status=status.HTTP_201_CREATED)
+
+
+class AddProductView(APIView):
+    def post(self, request, *args, **kwargs):
+        product_name = request.data.get('product')
+        try:
+            order = Order.objects.get(product=product_name)
+            order.item_count -= 1
+            order.save()
+            return Response({"message": "Product added and inventory updated"}, status=status.HTTP_200_OK)
+        except Order.DoesNotExist:
+            return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class SaveBillView(APIView):
+    def post(self, request, *args, **kwargs):
+        orders = Order.objects.filter(status="billed")
+        bill = Bill.objects.create(total_cost=sum(order.total_cost for order in orders))
+        bill.orders.add(*orders)
+        return Response({"message": "Bill saved successfully", "bill_id": bill.id}, status=status.HTTP_201_CREATED)
+    
+
+class PreviousBillsView(ListAPIView):
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer

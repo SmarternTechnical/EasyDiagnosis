@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import SignUpView, LoginView, LogoutView,RequestConsultationView,AddUserInfoView,BookHospitalAppointmentView,BookLabTestAppointmentView, ReviewAPI
-
+from .views import OrderListView, OrderDetailView,UploadCSVView,AddProductView,SaveBillView,PreviousBillsView
 
 
 urlpatterns = [
@@ -17,6 +17,13 @@ urlpatterns = [
     path('book-labtest/', BookLabTestAppointmentView.as_view(), name='book-labtest'),
     path('add-to-cart/', views.add_to_cart, name='add_to_cart'),
      path('reviews/', ReviewAPI.as_view(), name='reviews'),
+    path('orders/private/', OrderListView.as_view(), name='private-orders'),
+    path('orders/private/<int:pk>/', OrderDetailView.as_view(), name='private-order-detail'),
 
+    path('orders/upload/', UploadCSVView.as_view(), name='upload-csv'),
+    path('billing/add-product/', AddProductView.as_view(), name='add-product'),
+    path('billing/save/', SaveBillView.as_view(), name='save-bill'),
+    path('billing/previous/', PreviousBillsView.as_view(), name='previous-bills'),
 ]
+
 

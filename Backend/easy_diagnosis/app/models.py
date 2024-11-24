@@ -195,3 +195,41 @@ class Review(models.Model):
         return f"{self.category} Review by {self.user.username}"
     
         return self.user_id
+
+
+
+
+class Customer(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    user_id = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('approved', 'Approved'),
+        ('awaiting_shipment', 'Awaiting Shipment'),
+        ('shipped', 'Shipped'),
+        ('rejected', 'Rejected'),
+        ('queried', 'Queried'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    order_info = models.CharField(max_length=100)
+    product = models.CharField(max_length=255)
+    timeline = models.TextField(null=True, blank=True)  # Detailed history or status updates
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='new')
+
+    def __str__(self):
+        return f"Order {self.order_info} - {self.status}"
+    
+class Bill(models.Model):
+    orders = models.ManyToManyField(Order)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
