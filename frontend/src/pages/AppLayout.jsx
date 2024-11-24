@@ -4,6 +4,8 @@ import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 
 import { useLocation } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const useScrollToTop = (options = {}) => {
   const { smooth = true, additionalSelectors = [], offset = 0 } = options;
@@ -73,6 +75,7 @@ const AppLayout = () => {
       <Outlet />
 
       <Footer />
+      <ToastContainer />
     </div>
   );
 };
