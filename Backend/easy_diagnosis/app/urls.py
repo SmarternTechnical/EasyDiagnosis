@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import SignUpView, LoginView, LogoutView,RequestConsultationView,AddUserInfoView,BookHospitalAppointmentView,BookLabTestAppointmentView, ReviewAPI
-from .views import OrderListView, OrderDetailView,UploadCSVView,AddProductView,SaveBillView,PreviousBillsView
+from .views import OrderListView, OrderDetailView,UploadCSVView,AddProductView,upload_csv,add_product_to_bill,save_bill,get_all_bills
 
 
 urlpatterns = [
@@ -20,10 +20,10 @@ urlpatterns = [
     path('orders/private/', OrderListView.as_view(), name='private-orders'),
     path('orders/private/<int:pk>/', OrderDetailView.as_view(), name='private-order-detail'),
 
-    path('orders/upload/', UploadCSVView.as_view(), name='upload-csv'),
-    path('billing/add-product/', AddProductView.as_view(), name='add-product'),
-    path('billing/save/', SaveBillView.as_view(), name='save-bill'),
-    path('billing/previous/', PreviousBillsView.as_view(), name='previous-bills'),
+     path('upload-csv/', upload_csv, name='upload_csv'),
+     path('add-product-to-bill/', add_product_to_bill, name='add_product_to_bill'),
+    path('save-bill/', save_bill, name='save_bill'),
+    path('get-all-bills/', get_all_bills, name='get_all_bills'),
 ]
 
 

@@ -19,10 +19,14 @@ from .serializers import ConsultationSerializer
 from .models import UserInfo,HospitalBooking,Customer, Order
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
-from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order
+from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product
 from .serializers import LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from django.contrib.auth import authenticate
+from django.db import transaction
+from decimal import Decimal
+
+
 
 class SignUpView(APIView):
     def post(self, request):
@@ -574,14 +578,115 @@ class AddProductView(APIView):
             return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
-class SaveBillView(APIView):
-    def post(self, request, *args, **kwargs):
-        orders = Order.objects.filter(status="billed")
-        bill = Bill.objects.create(total_cost=sum(order.total_cost for order in orders))
-        bill.orders.add(*orders)
-        return Response({"message": "Bill saved successfully", "bill_id": bill.id}, status=status.HTTP_201_CREATED)
-    
+@api_view(['POST'])
+def upload_csv(request):
+    if 'file' not in request.FILES:
+        return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-class PreviousBillsView(ListAPIView):
-    queryset = Bill.objects.all()
-    serializer_class = BillSerializer
+    csv_file = request.FILES['file']
+    if not csv_file.name.endswith('.csv'):
+        return Response({"error": "File must be a CSV"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        data_set = TextIOWrapper(csv_file.file, encoding='utf-8')
+        reader = csv.DictReader(data_set)
+
+        for row in reader:
+            required_fields = ['Product Name', 'Size', 'Units', 'Item Count', 'MRP']
+            for field in required_fields:
+                if not row.get(field):
+                    return Response(
+                        {"error": f"Missing {field} in row: {row}"}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            Product.objects.update_or_create(
+                product_name=row['Product Name'],
+                size=row['Size'],
+                units=row['Units'],
+                defaults={
+                    'item_count': int(row['Item Count']),
+                    'mrp': float(row['MRP']),
+                }
+            )
+
+        return Response({"message": "Data uploaded successfully"}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Temporary storage for bill before final save
+TEMP_BILL = {"products": [], "total_value": 0}
+
+@api_view(['POST'])
+def add_product_to_bill(request):
+    """
+    Add a product to the temporary bill.
+    """
+    product_id = request.data.get('product_id')
+    if not product_id:
+        return Response({"error": "Product ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Get product
+        product = Product.objects.get(id=product_id)
+        if product.item_count < 1:
+            return Response({"error": f"Insufficient stock for {product.product_name}"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Decrement product item_count
+        product.item_count -= 1
+        product.save()
+
+        # Add product to TEMP_BILL
+        TEMP_BILL["products"].append({
+            "product_name": product.product_name,
+            "size": product.size,
+            "units": product.units,
+            "mrp": product.mrp
+        })
+        TEMP_BILL["total_value"] += product.mrp
+
+        return Response({"message": "Product added to bill", "bill": TEMP_BILL}, status=status.HTTP_200_OK)
+    except Product.DoesNotExist:
+        return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+def save_bill(request):
+    global TEMP_BILL
+    if not TEMP_BILL["products"]:
+        return Response({"error": "No products in the bill to save"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        for product in TEMP_BILL["products"]:
+            if isinstance(product['mrp'], Decimal):
+                product['mrp'] = float(product['mrp'])
+
+     
+        with transaction.atomic():
+            bill = Bill.objects.create(
+                products=TEMP_BILL["products"],
+                total_value=float(TEMP_BILL["total_value"])  
+            )
+            TEMP_BILL = {"products": [], "total_value": 0.0}
+
+        return Response({"message": "Bill saved successfully", "bill_id": bill.id}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['GET'])
+def get_all_bills(request):
+    """
+    Get all saved bills.
+    """
+    bills = Bill.objects.all()
+    bill_data = [{
+        "id": bill.id,
+        "products": bill.products,
+        "total_value": bill.total_value,
+        "created_at": bill.created_at
+    } for bill in bills]
+    return Response(bill_data, status=status.HTTP_200_OK)

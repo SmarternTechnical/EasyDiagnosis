@@ -230,7 +230,22 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.order_info} - {self.status}"
     
+
+class Product(models.Model):
+    product_name = models.CharField(max_length=255)
+    size = models.CharField(max_length=50)
+    units = models.CharField(max_length=50)
+    item_count = models.IntegerField()
+    mrp = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.product_name
+
+
 class Bill(models.Model):
-    orders = models.ManyToManyField(Order)
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    products = models.JSONField()  # To store product details in JSON format
+    total_value = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Bill {self.id} - Total: {self.total_value}"

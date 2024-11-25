@@ -10,7 +10,8 @@ from .models import (
     Review,
     Customer,
     Order,
-    Bill
+    Bill,
+    Product
 )
 
 
@@ -51,6 +52,8 @@ class OrderAdmin(admin.ModelAdmin):
 class BillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Bill._meta.fields]
 
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('product_name', 'size', 'units', 'item_count', 'mrp')
 
     search_fields = ['order_info', 'product'] 
 admin.site.register(MedicalServiceCategory, MedicalServiceCategoryAdmin)
@@ -64,3 +67,4 @@ admin.site.register(Review, ReviewAdmin)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Bill, BillAdmin)
+admin.site.register(Product, ProductAdmin)
