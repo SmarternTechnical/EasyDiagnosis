@@ -33,15 +33,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'app',
+    'corsheaders',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
-    'corsheaders',
-    'rest_framework',
 ]
 
 REST_FRAMEWORK = {
@@ -55,6 +55,12 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+AUTH_USER_MODEL = 'app.UserAccount'
+AUTHENTICATION_BACKENDS = [
+    'app.backends.EmailBackend',  # Replace with the correct import path for your backend
+    'django.contrib.auth.backends.ModelBackend',  # Fallback to default backend
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -15,7 +15,9 @@ class UserAccountSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
 
 class ConsultationSerializer(serializers.ModelSerializer):
     class Meta:

@@ -20,8 +20,9 @@ from .models import UserInfo,HospitalBooking,Customer, Order
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
 from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order
-from .serializers import LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer
+from .serializers import LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer
 from rest_framework.generics import ListAPIView,RetrieveAPIView
+from django.contrib.auth import authenticate
 
 class SignUpView(APIView):
     def post(self, request):
@@ -30,30 +31,36 @@ class SignUpView(APIView):
             user_account = serializer.save()
             return Response({
                 "message": "Account has been created",
-                "user_id": str(user_account.user_id)
+                "user_id": user_account.user_id
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
     def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        try:
-            user_account = UserAccount.objects.get(email=email)
-        except UserAccount.DoesNotExist:
-            return Response({"message": "Invalid email or password"}, status=status.HTTP_404_NOT_FOUND)
-
-        if check_password(password, user_account.password):
-            refresh = RefreshToken.for_user(user_account)
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
             return Response({
-                "message": "Login successful",
-                "user_id": str(user_account.user_id),
-                "access_token": str(refresh.access_token),
-                "refresh_token": str(refresh)
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+                "message": "Invalid input",
+                "errors": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        user = authenticate(request, email=email, password=password)
+        if not user:
+            return Response({
+                "message": "Invalid credentials"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "message": "Login successful",
+            "user_id": user.user_id,
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh)
+        }, status=status.HTTP_200_OK)
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -381,7 +388,6 @@ def get_category_details(request):
 
 
 @api_view(['POST'])
-@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def add_to_cart(request):
     user_id = request.user.id

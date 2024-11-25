@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from datetime import datetime
 from datetime import date  
+from django.contrib.auth.models import AbstractUser
 
 
 class MedicalServiceCategory(models.Model):
@@ -24,13 +25,16 @@ class PharmaSupport(models.Model):
 
     def __str__(self):
         return self.product_name
+    
+class UserAccount(AbstractUser):
+    user_id = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
+    email = models.EmailField(unique=True, blank=False, null=False)
+    username = models.CharField(max_length=150, unique=True, blank=True, null=True)
 
-
-
-class UserAccount(models.Model):
-    user_id = models.UUIDField(default=uuid.uuid4, null=True, editable=False)  # Remove unique=True temporarily
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.email
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.email
@@ -161,10 +165,7 @@ class LabTestBooking(models.Model):
     lab = models.ForeignKey(Lab, on_delete=models.CASCADE, related_name='lab_bookings')  # The lab for the test
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     appointment_date = models.DateField(null=True, blank=True)  # Appointment date
-    appointment_time = models.TimeField(null=True, blank=True)  # Appointment time
-
-    def __str__(self):
-        return f'Lab Booking {self.id} - {self.status} for {self.lab.name}'
+    appointment_time = models.TimeField(null=True, blank=True)  # Appointment time'
 
 
 class Cart(models.Model):
