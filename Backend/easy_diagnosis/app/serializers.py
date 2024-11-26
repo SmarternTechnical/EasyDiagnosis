@@ -30,7 +30,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = [
-            'user_id', 'first_name', 'last_name', 'fathers_name', 'aadhar_number',
+            'user_account', 'first_name', 'last_name', 'fathers_name', 'aadhar_number',
             'dob', 'age', 'email', 'phone_number', 'street', 'city', 'state', 
             'country', 'pincode', 'medical_history_pdf'
         ]

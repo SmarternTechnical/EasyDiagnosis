@@ -111,7 +111,7 @@ class Consultation(models.Model):
 
 
 class UserInfo(models.Model):
-    user_id = models.AutoField(primary_key=True)
+    user_account = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='userinfo')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     fathers_name = models.CharField(max_length=100)
@@ -126,7 +126,6 @@ class UserInfo(models.Model):
     pincode = models.CharField(max_length=6)
     medical_history_pdf = models.URLField(max_length=255)
 
-    
     @property
     def age(self):
         today = date.today()

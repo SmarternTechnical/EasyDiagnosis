@@ -11,7 +11,8 @@ from .models import (
     Customer,
     Order,
     Bill,
-    Product
+    Product,
+    UserInfo
 )
 
 
@@ -56,6 +57,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('product_name', 'size', 'units', 'item_count', 'mrp')
 
     search_fields = ['order_info', 'product'] 
+class UserInfoAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in UserInfo._meta.fields]
+
 admin.site.register(MedicalServiceCategory, MedicalServiceCategoryAdmin)
 admin.site.register(PharmaSupport, PharmaSupportAdmin)
 admin.site.register(UserAccount, UserAccountAdmin)
@@ -68,3 +72,4 @@ admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Bill, BillAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(UserInfo, UserInfoAdmin)

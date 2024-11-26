@@ -185,9 +185,13 @@ def get_category_details(request):
 class AddUserInfoView(APIView):
 
     def post(self, request):
-        # Automatically associate the logged-in user's ID with the user info
         data = request.data.copy()
-        data['user_id'] = request.user.id
+
+        # Associate the logged-in user's UserAccount with the UserInfo
+        user_account = request.user  # request.user is the UserAccount instance for the logged-in user
+
+        # Add the `user_account` instance to the data
+        data['user_account'] = user_account.id
 
         serializer = UserInfoSerializer(data=data)
         if serializer.is_valid():
@@ -217,7 +221,7 @@ class RequestConsultationView(APIView):
 
         # Assuming there's a UserInfo object related to the UserAccount object
         try:
-            user_info = UserInfo.objects.get(user_id=user.id)
+            user_info = UserInfo.objects.get(user_account=user)
         except UserInfo.DoesNotExist:
             return Response({"error": "User info not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -267,7 +271,7 @@ class BookHospitalAppointmentView(APIView):
 
         # Try to get the corresponding UserInfo instance
         try:
-            user_info = UserInfo.objects.get(user_id=user_id)
+            user_info = UserInfo.objects.get(user_account=user)
         except UserInfo.DoesNotExist:
             return Response({"error": "User Info not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -319,7 +323,7 @@ class BookLabTestAppointmentView(APIView):
 
         # Try to get the corresponding UserInfo instance
         try:
-            user_info = UserInfo.objects.get(user_id=user_id)
+            user_info = UserInfo.objects.get(user_account=user)
         except UserInfo.DoesNotExist:
             return Response({"error": "User Info not found."}, status=status.HTTP_404_NOT_FOUND)
 
