@@ -77,3 +77,53 @@ class BillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bill
         fields = '__all__'
+from .models import Notification,HospitalNotification,LabTestNotification
+
+class NotificationSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.CharField(source='doctor.d_name', read_only=True)  # Include doctor's name
+    user_name = serializers.CharField(source='user.username', read_only=True)  # Include user's name or username
+
+    class Meta:
+        model = Notification
+        fields = [
+            'id',
+            'doctor_name',
+            'user_name',
+            'consultation_type',
+            'message',
+            'created_at',
+            'is_read'
+        ]
+        read_only_fields = ['id', 'created_at', 'doctor_name', 'user_name']
+class HospitalNotificationSerializer(serializers.ModelSerializer):
+    hospital_name = serializers.CharField(source='hospital.name', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = HospitalNotification
+        fields = [
+            'id',
+            'hospital_name',
+            'user_name',
+            'consultation_type',
+            'message',
+            'created_at',
+            'is_read'
+        ]
+        read_only_fields = ['id', 'created_at', 'hospital_name', 'user_name']
+class LabTestNotificationSerializer(serializers.ModelSerializer):
+    lab_name = serializers.CharField(source='lab.name', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = LabTestNotification
+        fields = [
+            'id',
+            'lab_name',
+            'user_name',
+            'notification_type',
+            'message',
+            'created_at',
+            'is_read'
+        ]
+        read_only_fields = ['id', 'created_at', 'lab_name', 'user_name']

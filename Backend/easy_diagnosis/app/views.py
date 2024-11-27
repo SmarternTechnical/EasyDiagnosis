@@ -19,8 +19,8 @@ from .serializers import ConsultationSerializer
 from .models import UserInfo,HospitalBooking,Customer, Order
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
-from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product
-from .serializers import LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer
+from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product,Notification,HospitalNotification,LabTestNotification
+from .serializers import LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer,NotificationSerializer
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from django.contrib.auth import authenticate
 from django.db import transaction
@@ -199,12 +199,13 @@ class AddUserInfoView(APIView):
             return Response({"message": "User information added successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class RequestConsultationView(APIView):
     def post(self, request):
         user_id = request.user.id
         doctor_id = request.data.get('d_id')
-        scheduled_date = request.data.get('scheduled_date')  # Get scheduled date from request
-        scheduled_time = request.data.get('scheduled_time')  # Get scheduled time from request
+        scheduled_date = request.data.get('scheduled_date')
+        scheduled_time = request.data.get('scheduled_time')
 
         if not doctor_id:
             return Response({"error": "Doctor ID is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -219,32 +220,41 @@ class RequestConsultationView(APIView):
         except Doctors.DoesNotExist:
             return Response({"error": "Invalid doctor ID."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Assuming there's a UserInfo object related to the UserAccount object
         try:
             user_info = UserInfo.objects.get(user_account=user)
         except UserInfo.DoesNotExist:
             return Response({"error": "User info not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Create the consultation
+        consultation_type = "scheduled" if scheduled_date and scheduled_time else "instant"
+
         consultation = Consultation.objects.create(
             u_id=user,
             d_id=doctor,
             status="pending",
-            date=scheduled_date if scheduled_date else None,  # Assign the scheduled date if provided
-            time=scheduled_time if scheduled_time else None   # Assign the scheduled time if provided
+            date=scheduled_date if scheduled_date else None,
+            time=scheduled_time if scheduled_time else None
         )
-        
-        # Serialize the consultation and user info data
-        consultation_serializer = ConsultationSerializer(consultation)
-        user_info_serializer = UserInfoSerializer(user_info)  # Serialize user info
-        
-        # Combine both the consultation and user info in the response
-        return Response({
-            "message": "Consultation request sent.",
-            "consultation": consultation_serializer.data,
-            "user_info": user_info_serializer.data  # Include user info in the response
-        }, status=status.HTTP_201_CREATED)
 
+        # Save notification to the database
+        message = (
+            f"You have a new {consultation_type} consultation request from "
+            f"{user_info.first_name} {user_info.last_name}."
+        )
+        Notification.objects.create(
+            doctor=doctor,
+            user=user,
+            consultation_type=consultation_type,
+            message=message
+        )
+
+        consultation_serializer = ConsultationSerializer(consultation)
+        user_info_serializer = UserInfoSerializer(user_info)
+
+        return Response({
+            "message": "Consultation request sent. Notification saved.",
+            "consultation": consultation_serializer.data,
+            "user_info": user_info_serializer.data
+        }, status=status.HTTP_201_CREATED)
 
 class BookHospitalAppointmentView(APIView):
     def post(self, request):
@@ -276,35 +286,45 @@ class BookHospitalAppointmentView(APIView):
             return Response({"error": "User Info not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Create the hospital booking instance
-        # Pass the ForeignKey IDs directly for user and hospital
         hospital_booking = HospitalBooking.objects.create(
-            u_id=user,  # Pass the user instance, not just the ID
-            hospital=hospital,  # Pass the hospital instance, not just the ID
-            status="pending",  # Default status is "pending"
-            appointment_date=appointment_date if appointment_date else None,  # Assign the appointment date
-            appointment_time=appointment_time if appointment_time else None  # Assign the appointment time
+            u_id=user,
+            hospital=hospital,
+            status="pending",
+            appointment_date=appointment_date if appointment_date else None,
+            appointment_time=appointment_time if appointment_time else None
         )
 
-        # Serialize the hospital booking data
-        hospital_booking_serializer = HospitalBookingSerializer(hospital_booking)
+        # Save notification to the database
+        message = (
+            f"You have a new hospital appointment booking request from "
+            f"{user_info.first_name} {user_info.last_name}."
+        )
+        HospitalNotification.objects.create(
+            hospital=hospital,
+            user=user,
+            consultation_type="hospital_appointment",
+            message=message
+        )
 
-        # Serialize the user info data using the UserInfoSerializer
+        # Serialize the hospital booking and user info data
+        hospital_booking_serializer = HospitalBookingSerializer(hospital_booking)
         user_info_serializer = UserInfoSerializer(user_info)
 
-        # Return response with booking details and user info
+        # Return response with booking details and notification confirmation
         return Response({
-            "message": "Hospital appointment booking request sent.",
+            "message": "Hospital appointment booking request sent. Notification saved.",
             "booking": hospital_booking_serializer.data,
-            "user_info": user_info_serializer.data  # Include user info in the response
+            "user_info": user_info_serializer.data
         }, status=status.HTTP_201_CREATED)
+
 
 class BookLabTestAppointmentView(APIView):
     def post(self, request):
         # Get data from the request
         user_id = request.user.id
-        lab_id = request.data.get('lab_id')  # Lab ID
-        appointment_date = request.data.get('appointment_date')  # Appointment date
-        appointment_time = request.data.get('appointment_time')  # Appointment time
+        lab_id = request.data.get('lab_id')
+        appointment_date = request.data.get('appointment_date')
+        appointment_time = request.data.get('appointment_time')
 
         # Validate that user_id and lab_id are provided
         if not user_id or not lab_id:
@@ -329,25 +349,36 @@ class BookLabTestAppointmentView(APIView):
 
         # Create the lab test booking instance
         lab_booking = LabTestBooking.objects.create(
-            u_id=user,  # Pass the user instance
-            lab=lab,  # Pass the lab instance
-            status="pending",  # Default status is "pending"
-            appointment_date=appointment_date if appointment_date else None,  # Assign the appointment date
-            appointment_time=appointment_time if appointment_time else None  # Assign the appointment time
+            u_id=user,
+            lab=lab,
+            status="pending",
+            appointment_date=appointment_date if appointment_date else None,
+            appointment_time=appointment_time if appointment_time else None
         )
 
-        # Serialize the lab booking data
-        lab_booking_serializer = LabTestBookingSerializer(lab_booking)
+        # Save notification to the database
+        message = (
+            f"You have a new lab test appointment request from "
+            f"{user_info.first_name} {user_info.last_name}."
+        )
+        LabTestNotification.objects.create(
+            lab=lab,
+            user=user,
+            notification_type="lab_test_appointment",
+            message=message
+        )
 
-        # Serialize the user info data
+        # Serialize the lab booking and user info data
+        lab_booking_serializer = LabTestBookingSerializer(lab_booking)
         user_info_serializer = UserInfoSerializer(user_info)
 
-        # Return response with booking details and user info
+        # Return response with booking details and notification confirmation
         return Response({
-            "message": "Lab test appointment booking request sent.",
+            "message": "Lab test appointment booking request sent. Notification saved.",
             "booking": lab_booking_serializer.data,
             "user_info": user_info_serializer.data
         }, status=status.HTTP_201_CREATED)
+
 
 @api_view(['POST'])
 def get_category_details(request):
@@ -694,3 +725,48 @@ def get_all_bills(request):
         "created_at": bill.created_at
     } for bill in bills]
     return Response(bill_data, status=status.HTTP_200_OK)
+class DoctorNotificationsView(APIView):
+    def get(self, request):
+        doctor_id = request.user.id  # Assuming the doctor is authenticated and `request.user` is the doctor
+        
+        try:
+            doctor = Doctors.objects.get(id=doctor_id)
+        except Doctors.DoesNotExist:
+            return Response({"error": "Invalid doctor ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        notifications = Notification.objects.filter(doctor=doctor).order_by('-created_at')
+        notifications_data = [
+            {
+                "id": n.id,
+                "message": n.message,
+                "consultation_type": n.consultation_type,
+                "created_at": n.created_at,
+                "is_read": n.is_read
+            }
+            for n in notifications
+        ]
+
+        return Response({"notifications": notifications_data}, status=status.HTTP_200_OK)
+class GetUserInfoView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is logged in
+
+    def get(self, request):
+        try:
+            # Get the logged-in user
+            user = request.user
+
+            # Retrieve the corresponding UserInfo instance
+            user_info = UserInfo.objects.get(user_account=user)
+
+            # Serialize the user and user_info data
+            user_serializer = UserAccountSerializer(user)
+            user_info_serializer = UserInfoSerializer(user_info)
+
+            # Return the combined response
+            return Response({
+                "user": user_serializer.data,
+                "user_info": user_info_serializer.data
+            }, status=status.HTTP_200_OK)
+        except UserInfo.DoesNotExist:
+            return Response({"error": "User Info not found for the logged-in user."},
+                            status=status.HTTP_404_NOT_FOUND)

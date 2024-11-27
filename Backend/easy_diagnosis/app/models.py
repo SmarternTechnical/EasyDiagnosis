@@ -248,3 +248,39 @@ class Bill(models.Model):
 
     def __str__(self):
         return f"Bill {self.id} - Total: {self.total_value}"
+
+from django.utils.timezone import now
+
+class Notification(models.Model):
+    doctor = models.ForeignKey('Doctors', on_delete=models.CASCADE)
+    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE)
+    consultation_type = models.CharField(max_length=20)  # 'instant' or 'scheduled'
+    message = models.TextField()
+    created_at = models.DateTimeField(default=now)
+    is_read = models.BooleanField(default=False)  # To track if the notification has been read
+
+    def __str__(self):
+        return f"Notification for Dr. {self.doctor.d_name} - {self.consultation_type}"
+class HospitalNotification(models.Model):
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE)
+    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE)
+    consultation_type = models.CharField(max_length=20)  # 'hospital_appointment'
+    message = models.TextField()
+    created_at = models.DateTimeField(default=now)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.hospital.name} - {self.consultation_type}"
+from django.db import models
+from django.utils.timezone import now
+
+class LabTestNotification(models.Model):
+    lab = models.ForeignKey('Lab', on_delete=models.CASCADE)  # Assuming Lab is a model
+    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=20)  # Example: 'lab_test_appointment'
+    message = models.TextField()
+    created_at = models.DateTimeField(default=now)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.lab.name} - {self.notification_type}"
