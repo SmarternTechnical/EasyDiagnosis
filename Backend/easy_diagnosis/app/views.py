@@ -19,12 +19,14 @@ from .serializers import ConsultationSerializer
 from .models import UserInfo,HospitalBooking,Customer, Order
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
-from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product,Notification,HospitalNotification,LabTestNotification
+from .models import Question,Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product,Notification,HospitalNotification,LabTestNotification
 from .serializers import LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer,NotificationSerializer
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from django.contrib.auth import authenticate
 from django.db import transaction
 from decimal import Decimal
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -747,6 +749,7 @@ class DoctorNotificationsView(APIView):
         ]
 
         return Response({"notifications": notifications_data}, status=status.HTTP_200_OK)
+    
 class GetUserInfoView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is logged in
 
@@ -770,3 +773,39 @@ class GetUserInfoView(APIView):
         except UserInfo.DoesNotExist:
             return Response({"error": "User Info not found for the logged-in user."},
                             status=status.HTTP_404_NOT_FOUND)
+        
+@csrf_exempt
+def questions_api(request):
+    if request.method == 'GET':
+        questions = Question.objects.all().values(
+            'sr_no', 'category', 'question_english', 'question_hindi',
+        )
+        return JsonResponse({"questions": list(questions)}, safe=False)
+
+    elif request.method == 'POST':
+        data = json.loads(request.body)  
+        try:
+            question_id = data.get('question_id')
+            answer = data.get('answer')
+            
+            if not question_id or not answer:
+                return JsonResponse({"error": "question_id and answer are required."}, status=400)
+
+            question = Question.objects.filter(id=question_id).first()
+            if not question:
+                return JsonResponse({"error": "Question not found."}, status=404)
+
+            question.answers = answer
+            question.save()
+
+            return JsonResponse({"message": "Answer updated successfully.", "question": {
+                "id": question.id,
+                "question_english": question.question_english,
+                "answer": question.answers
+            }}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+
+    else:
+        return JsonResponse({"error": "Invalid request method. Use GET or POST."}, status=405)

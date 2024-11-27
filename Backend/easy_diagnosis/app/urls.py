@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
 from .views import SignUpView, LoginView, LogoutView,RequestConsultationView,AddUserInfoView,BookHospitalAppointmentView,BookLabTestAppointmentView, ReviewAPI
-from .views import OrderListView, OrderDetailView,UploadCSVView,AddProductView,upload_csv,add_product_to_bill,save_bill,get_all_bills,GetUserInfoView
-
+from .views import (
+    OrderListView, OrderDetailView,UploadCSVView,AddProductView,upload_csv,add_product_to_bill,save_bill,get_all_bills,GetUserInfoView
+    ,questions_api
+)
 
 urlpatterns = [
     # path('', views.home, name='home'),
@@ -25,6 +27,7 @@ urlpatterns = [
     path('save-bill/', save_bill, name='save_bill'),
     path('get-all-bills/', get_all_bills, name='get_all_bills'),
     path('user-info/', GetUserInfoView.as_view(), name='get_user_info'),
+    path('questions/', questions_api, name='questions_api'),
 ]
 
 

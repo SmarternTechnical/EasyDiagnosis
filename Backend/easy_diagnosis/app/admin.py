@@ -13,7 +13,8 @@ from .models import (
     Bill,
     Product,
     UserInfo,
-    Notification
+    Notification,
+    Question
 )
 
 
@@ -63,6 +64,10 @@ class UserInfoAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Notification._meta.fields]
 
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Question._meta.fields]
+
+admin.site.register(Question, QuestionAdmin)
 admin.site.register(MedicalServiceCategory, MedicalServiceCategoryAdmin)
 admin.site.register(PharmaSupport, PharmaSupportAdmin)
 admin.site.register(UserAccount, UserAccountAdmin)

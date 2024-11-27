@@ -284,3 +284,15 @@ class LabTestNotification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.lab.name} - {self.notification_type}"
+
+
+class Question(models.Model):
+    sr_no = models.IntegerField()
+    category = models.CharField(max_length=100)
+    question_english = models.TextField()
+    question_hindi = models.TextField()
+    # options = models.CharField(max_length=50)
+    answers = models.CharField(max_length=50, blank=True, null=True)
+
+    def _str_(self):
+        return f"{self.sr_no} - {self.category}"
