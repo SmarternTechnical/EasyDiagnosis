@@ -77,7 +77,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Add your React app URL here
 ]
-
+CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'easy_diagnosis.urls'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Add your React app URL here
@@ -153,3 +153,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True  # Keeps the cookie inaccessible via JavaScript
+CSRF_COOKIE_HTTPONLY = False    # Set to False if you need the CSRF token in JavaScript
+SESSION_COOKIE_SAMESITE = 'None'  # Required for cross-origin requests
+CSRF_COOKIE_SAMESITE = 'None'
