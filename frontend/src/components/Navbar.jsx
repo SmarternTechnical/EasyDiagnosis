@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 import isLoggedInContext from "../Context/IsLoggedInContext";
 import UserContext from "../Context/UserContext";
-import UserProfile from "./Navbar/UserProfile";
+import UserProfile from "./Dropdown/UserProfile";
 
 const ImageData = [
   {
