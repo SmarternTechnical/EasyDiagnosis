@@ -19,12 +19,14 @@ from .serializers import ConsultationSerializer
 from .models import UserInfo,HospitalBooking,Customer, Order
 from .serializers import  UserInfoSerializer
 from django.utils import timezone
-from .models import Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product,Notification,HospitalNotification,LabTestNotification
-from .serializers import LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer,NotificationSerializer
+from .models import Question,Bill,LabTestBooking, UserAccount, Lab, Review,Order, Product,Notification,HospitalNotification,LabTestNotification
+from .serializers import CartSerializer,LoginSerializer,LabTestBookingSerializer, HospitalBookingSerializer, ReviewSerializer,OrderSerializer,BillSerializer,NotificationSerializer
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from django.contrib.auth import authenticate
 from django.db import transaction
 from decimal import Decimal
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -747,6 +749,7 @@ class DoctorNotificationsView(APIView):
         ]
 
         return Response({"notifications": notifications_data}, status=status.HTTP_200_OK)
+    
 class GetUserInfoView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is logged in
 
@@ -770,3 +773,70 @@ class GetUserInfoView(APIView):
         except UserInfo.DoesNotExist:
             return Response({"error": "User Info not found for the logged-in user."},
                             status=status.HTTP_404_NOT_FOUND)
+        
+@csrf_exempt
+def questions_api(request):
+    if request.method == 'GET':
+        questions = Question.objects.all().values(
+            'sr_no', 'category', 'question_english', 'question_hindi',
+        )
+        return JsonResponse({"questions": list(questions)}, safe=False)
+
+    elif request.method == 'POST':
+        data = json.loads(request.body)  
+        try:
+            question_id = data.get('question_id')
+            answer = data.get('answer')
+            
+            if not question_id or not answer:
+                return JsonResponse({"error": "question_id and answer are required."}, status=400)
+
+            question = Question.objects.filter(id=question_id).first()
+            if not question:
+                return JsonResponse({"error": "Question not found."}, status=404)
+
+            question.answers = answer
+            question.save()
+
+            return JsonResponse({"message": "Answer updated successfully.", "question": {
+                "id": question.id,
+                "question_english": question.question_english,
+                "answer": question.answers
+            }}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+
+    else:
+        return JsonResponse({"error": "Invalid request method. Use GET or POST."}, status=405)
+ 
+import logging
+
+logger = logging.getLogger(__name__)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_cart(request):
+    try:
+        user_id = request.user.id
+        logger.debug(f"Fetching cart for user_id: {user_id}")
+
+        cart_items = Cart.objects.filter(user_id=user_id)
+        if not cart_items.exists():
+            logger.debug(f"No cart items found for user_id: {user_id}")
+            return Response({"cart": []}, status=200)
+
+        cart_data = [
+            {
+                "id": item.id,
+                "user_id": str(item.user_id),
+                "p_id": item.p_id,
+                "item_count": item.item_count,
+            }
+            for item in cart_items
+        ]
+        return Response(cart_data, status=200)
+
+    except Exception as e:
+        logger.error(f"Error fetching cart: {e}")
+        return Response({"error": str(e)}, status=500)

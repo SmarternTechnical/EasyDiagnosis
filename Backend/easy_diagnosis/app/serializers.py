@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from .models import Bill,UserAccount,UserInfo, Consultation, Review,Customer,Order, Product
+from .models import Bill,UserAccount,UserInfo, Consultation, Review,Customer,Order, Product, Cart
 
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
@@ -127,3 +127,8 @@ class LabTestNotificationSerializer(serializers.ModelSerializer):
             'is_read'
         ]
         read_only_fields = ['id', 'created_at', 'lab_name', 'user_name']
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = ['id', 'user_id', 'p_id', 'item_count']
