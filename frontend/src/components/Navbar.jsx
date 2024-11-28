@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaShoppingCart,
   FaUserAlt,
@@ -31,31 +31,49 @@ const ImageData = [
 ];
 
 const ImageData2 = [
-  {
-    heading: "Autism",
-    route: "/services/autism-support",
-  },
-  { heading: "Alzheimer’s", route: "/services/alzheimers-support" },
+  { heading: "Autism", route: "/audiotest/autism" },
+  { heading: "Alzheimer", route: "/audiotest/alzheimer" },
 ];
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showAudioTestDropdown, setShowAudioTestDropdown] = useState(false);
 
   const { isLoggedIn, setIsLoggedIn } = useContext(isLoggedInContext);
   const { user, setUser } = useContext(UserContext);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const toggleMobileDropdown = () => setMobileDropdownOpen(!mobileDropdownOpen);
+  // Ensure dropdown closes after some delay
+  let dropdownTimeout = null;
 
-  const handleMouseEnter = () => setShowDropdown(true);
-  const handleMouseLeave = () => setShowDropdown(false);
+  // Retrieve user and login state from localStorage on mount
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (storedUser && storedLoggedIn) {
+      setUser(storedUser);
+      setIsLoggedIn(true);
+    }
+  }, [setIsLoggedIn, setUser]);
 
   const handleLogout = () => {
+    // Clear login state
     setIsLoggedIn(false);
-    setUser("");
+    setUser(null);
+
+    // Remove data from localStorage
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+
+    // Clear cookies
+    document.cookie.split(";").forEach((cookie) => {
+      const [name] = cookie.split("=");
+      document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+    });
+
+    // Show notification and navigate to home
     toast.success("Logged out successfully!", {
       position: "top-right",
       autoClose: 3000,
@@ -65,15 +83,23 @@ const Navbar = () => {
 
   const handleLogin = () => navigate("/login");
 
+  const handleMouseEnter = (setDropdownState) => {
+    if (dropdownTimeout) clearTimeout(dropdownTimeout);
+    setDropdownState(true);
+  };
+
+  const handleMouseLeave = (setDropdownState) => {
+    dropdownTimeout = setTimeout(() => setDropdownState(false), 100); // 100ms delay
+  };
+
   return (
     <nav className="w-full h-[10%] bg-white shadow-md">
       <div className="container mx-auto lg:px-20 py-3 flex justify-between items-center">
-        {/* Logo */}
         <div className="bg-[#1fab89] font-bold text-white text-lg p-2">
           LOGO
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-lg">
           <NavLink
             to="/"
@@ -84,42 +110,10 @@ const Navbar = () => {
             Home
           </NavLink>
 
-          {/* AudioTest Dropdown */}
           <div
             className="relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <NavLink
-              to="/audiotest"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-[#1fab89] font-bold flex items-center"
-                  : "text-gray-600 flex items-center"
-              }
-            >
-              AudioTest <FaChevronDown className="ml-1" />
-            </NavLink>
-            {showDropdown && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                {ImageData2.map((item) => (
-                  <NavLink
-                    key={item.route}
-                    to={item.route}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
-                  >
-                    {item.heading}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Services Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => handleMouseEnter(setShowServicesDropdown)}
+            onMouseLeave={() => handleMouseLeave(setShowServicesDropdown)}
           >
             <NavLink
               to="/services"
@@ -131,7 +125,7 @@ const Navbar = () => {
             >
               Services <FaChevronDown className="ml-1" />
             </NavLink>
-            {showDropdown && (
+            {showServicesDropdown && (
               <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                 {ImageData.map((item) => (
                   <NavLink
@@ -156,7 +150,7 @@ const Navbar = () => {
           </NavLink>
 
           <NavLink
-            to="/hospitals"
+            to="/hospital/Eye%20Care%20Hospital"
             className={({ isActive }) =>
               isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
             }
@@ -164,24 +158,57 @@ const Navbar = () => {
             Hospitals
           </NavLink>
 
+          <div
+            className="relative"
+            onMouseEnter={() => handleMouseEnter(setShowAudioTestDropdown)}
+            onMouseLeave={() => handleMouseLeave(setShowAudioTestDropdown)}
+          >
+            <NavLink
+              to="/audiotest"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-[#1fab89] font-bold flex items-center"
+                  : "text-gray-600 flex items-center"
+              }
+            >
+              AudioTest <FaChevronDown className="ml-1" />
+            </NavLink>
+            {showAudioTestDropdown && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                {ImageData2.map((item) => (
+                  <NavLink
+                    key={item.route}
+                    to={item.route}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
+                  >
+                    {item.heading}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+
           <NavLink
-            to="/emergency"
+            to="/detection"
             className={({ isActive }) =>
               isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
             }
           >
-            Emergency
+            Detection
           </NavLink>
         </div>
 
-        {/* Right Side */}
+        {/* Action Buttons */}
         <div className="hidden md:flex items-center space-x-6">
-          {/* Cart */}
-          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1fab89]">
+          <div
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1fab89] cursor-pointer"
+            onClick={() =>
+              navigate("/services/buy-medicines/products/shopping-cart")
+            }
+          >
             <FaShoppingCart className="text-white" />
           </div>
 
-          {/* Login/Profile */}
           {isLoggedIn ? (
             <UserProfile name={user} handleLogout={handleLogout} />
           ) : (
@@ -195,70 +222,13 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu */}
         <div className="md:hidden">
-          <button onClick={toggleMenu} className="text-[#1fab89]">
+          <button onClick={() => setIsOpen(!isOpen)} className="text-[#1fab89]">
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white py-4">
-          <NavLink to="/" className="block px-4 py-2 text-gray-600">
-            Home
-          </NavLink>
-          <NavLink to="/appointments" className="block px-4 py-2 text-gray-600">
-            Appointments
-          </NavLink>
-
-          {/* Mobile Services Dropdown */}
-          <div className="px-4 py-2">
-            <button
-              onClick={toggleMobileDropdown}
-              className="flex items-center w-full text-gray-600"
-            >
-              Services <FaChevronDown className="ml-1" />
-            </button>
-            {mobileDropdownOpen && (
-              <div className="mt-2 ml-4">
-                {ImageData.map((item) => (
-                  <NavLink
-                    key={item.route}
-                    to={item.route}
-                    className="block px-4 py-2 text-gray-700 hover:bg-[#1fab89] hover:text-white rounded-md"
-                  >
-                    {item.heading}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <NavLink to="/hospitals" className="block px-4 py-2 text-gray-600">
-            Hospitals
-          </NavLink>
-          <NavLink to="/emergency" className="block px-4 py-2 text-gray-600">
-            Emergency
-          </NavLink>
-
-          {/* Mobile Auth Section */}
-          <div className="px-4 py-2 border-t">
-            {isLoggedIn ? (
-              <UserProfile handleLogout={handleLogout} />
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="w-full text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center justify-center"
-              >
-                <FaUserAlt className="mr-2" />
-                Login
-              </button>
-            )}
-          </div>
-        </div>
-      )}
     </nav>
   );
 };

@@ -1,29 +1,18 @@
-console.log('Loading recorder-worklet.js module');
-
-class RecorderWorklet extends AudioWorkletProcessor {
+// recorder-worklet.js
+class RecorderWorkletProcessor extends AudioWorkletProcessor {
   constructor() {
-    super();
-    this.chunks = [];
-    console.log('RecorderWorklet initialized');
+      super();
+      this.buffer = [];
   }
 
-  process(inputs, outputs, parameters) {
-    const input = inputs[0];
-    if (input) {
-      for (let i = 0; i < input.length; i++) {
-        this.chunks.push(input[i]);
+  process(inputs) {
+      const input = inputs[0];
+      if (input && input[0]) {
+          const samples = input[0].map(sample => Math.max(-1, Math.min(1, sample)) * 32767 | 0);
+          this.port.postMessage(samples);
       }
-    }
-
-    // Post message with the audio chunk data to the main thread
-    if (this.chunks.length) {
-      this.port.postMessage(this.chunks);
-      this.chunks = [];
-    }
-
-    return true; // Keep the processor alive
+      return true;
   }
 }
 
-registerProcessor('recorder-worklet', RecorderWorklet);
-console.log('RecorderWorklet registered');
+registerProcessor('recorder-worklet', RecorderWorkletProcessor);
