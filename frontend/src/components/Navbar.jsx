@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from "react";
 import {
   FaShoppingCart,
@@ -6,12 +5,9 @@ import {
   FaBars,
   FaTimes,
   FaChevronDown,
-  FaSignOutAlt,
-  FaUserCircle,
 } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 import isLoggedInContext from "../Context/IsLoggedInContext";
 import UserContext from "../Context/UserContext";
@@ -34,57 +30,43 @@ const ImageData = [
   { heading: "COVID Care", route: "/services/covid-care" },
 ];
 
+const ImageData2 = [
+  {
+    heading: "Autism",
+    route: "/services/autism-support",
+  },
+  { heading: "Alzheimer’s", route: "/services/alzheimers-support" },
+];
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-  const {isLoggedIn,setIsLoggedIn} = useContext(isLoggedInContext);
-  const {user,setUser}  = useContext(UserContext);
-  console.log("home page ka user: " + user+" is logged in "+ isLoggedIn);
-  let timeoutId;
+
+  const { isLoggedIn, setIsLoggedIn } = useContext(isLoggedInContext);
+  const { user, setUser } = useContext(UserContext);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleMobileDropdown = () => setMobileDropdownOpen(!mobileDropdownOpen);
 
-  const handleMouseEnter = () => {
-    clearTimeout(timeoutId);
-    setShowDropdown(true);
+  const handleMouseEnter = () => setShowDropdown(true);
+  const handleMouseLeave = () => setShowDropdown(false);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser("");
+    toast.success("Logged out successfully!", {
+      position: "top-right",
+      autoClose: 3000,
+    });
+    navigate("/");
   };
 
-  const handleMouseLeave = () => {
-    timeoutId = setTimeout(() => {
-      setShowDropdown(false);
-    }, 200);
-  };
-
-  const handleLogout = async () => {
-    try {
-      // await axios.post("http://127.0.0.1:8000/logout");
-      setIsLoggedIn(false);
-      setUser('');
-      toast.success('Logged out successfully!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
-
-  const handleLogin = () => {
-    navigate("/login");
-  };
+  const handleLogin = () => navigate("/login");
 
   return (
-    <nav className="w-full h-[10%] m-1 p-2">
+    <nav className="w-full h-[10%] bg-white shadow-md">
       <div className="container mx-auto lg:px-20 py-3 flex justify-between items-center">
         {/* Logo */}
         <div className="bg-[#1fab89] font-bold text-white text-lg p-2">
@@ -92,7 +74,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6 md:text-lg">
+        <div className="hidden md:flex items-center space-x-6 text-lg">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -101,6 +83,37 @@ const Navbar = () => {
           >
             Home
           </NavLink>
+
+          {/* AudioTest Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <NavLink
+              to="/audiotest"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-[#1fab89] font-bold flex items-center"
+                  : "text-gray-600 flex items-center"
+              }
+            >
+              AudioTest <FaChevronDown className="ml-1" />
+            </NavLink>
+            {showDropdown && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                {ImageData2.map((item) => (
+                  <NavLink
+                    key={item.route}
+                    to={item.route}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#1fab89] hover:text-white"
+                  >
+                    {item.heading}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Services Dropdown */}
           <div
@@ -141,14 +154,16 @@ const Navbar = () => {
           >
             Appointments
           </NavLink>
+
           <NavLink
-            to="/hospital/Eye%20Care%20Hospital"
+            to="/hospitals"
             className={({ isActive }) =>
               isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
             }
           >
             Hospitals
           </NavLink>
+
           <NavLink
             to="/emergency"
             className={({ isActive }) =>
@@ -159,25 +174,23 @@ const Navbar = () => {
           </NavLink>
         </div>
 
-        {/* Right Side - Cart, Login/Profile */}
+        {/* Right Side */}
         <div className="hidden md:flex items-center space-x-6">
           {/* Cart */}
           <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1fab89]">
-            <FaShoppingCart className="text-white mx-2" />
+            <FaShoppingCart className="text-white" />
           </div>
 
           {/* Login/Profile */}
           {isLoggedIn ? (
-            <>
             <UserProfile name={user} handleLogout={handleLogout} />
-            </>
           ) : (
             <button
               onClick={handleLogin}
-              className="text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center space-x-2"
+              className="text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center"
             >
-              <FaUserAlt />
-              <span>Login</span>
+              <FaUserAlt className="mr-2" />
+              Login
             </button>
           )}
         </div>
@@ -192,29 +205,15 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white shadow-md py-4">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
+        <div className="md:hidden bg-white py-4">
+          <NavLink to="/" className="block px-4 py-2 text-gray-600">
             Home
           </NavLink>
-          <NavLink
-            to="/appointments"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
+          <NavLink to="/appointments" className="block px-4 py-2 text-gray-600">
             Appointments
           </NavLink>
 
-          {/* Services Dropdown for Mobile */}
+          {/* Mobile Services Dropdown */}
           <div className="px-4 py-2">
             <button
               onClick={toggleMobileDropdown}
@@ -237,46 +236,29 @@ const Navbar = () => {
             )}
           </div>
 
-          <NavLink
-            to="/hospital"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
+          <NavLink to="/hospitals" className="block px-4 py-2 text-gray-600">
             Hospitals
           </NavLink>
-          <NavLink
-            to="/emergency"
-            className={({ isActive }) =>
-              `block px-4 py-2 ${
-                isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-              }`
-            }
-          >
+          <NavLink to="/emergency" className="block px-4 py-2 text-gray-600">
             Emergency
           </NavLink>
 
           {/* Mobile Auth Section */}
           <div className="px-4 py-2 border-t">
             {isLoggedIn ? (
-              <div className="space-y-2">
-                <UserProfile handleLogout={handleLogout} />
-              </div>
+              <UserProfile handleLogout={handleLogout} />
             ) : (
               <button
                 onClick={handleLogin}
-                className="w-full text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center justify-center space-x-2"
+                className="w-full text-[#1fab89] border-[#1fab89] border-2 px-4 py-2 rounded-full flex items-center justify-center"
               >
-                <FaUserAlt />
-                <span>Login</span>
+                <FaUserAlt className="mr-2" />
+                Login
               </button>
             )}
           </div>
         </div>
       )}
-      <hr className="bg-white h-0 md:bg-gray-300 md:h-[0.15rem] md:mx-12 md:mt-1 opacity-35" />
     </nav>
   );
 };

@@ -9,6 +9,8 @@ import {
 import Home from "./pages/Home";
 import AppLayout from "./pages/AppLayout";
 import Service from "./pages/Service";
+import AudioTest from "./pages/AudioTest";
+import AudioTestRoutes from "./Routes/AudioTestRoutes";
 import ServiceRoutes from "./Routes/ServiceRoutes";
 import Products from "./components/services/products/Products";
 import ProductViewDetail from "./components/services/products/ProductViewDetail";
@@ -38,6 +40,9 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="/services" element={<Service />}>
             <Route path="*" element={<ServiceRoutes />} />
+          </Route>
+          <Route path="/audiotest" element={<AudioTest />}>
+            <Route path="*" element={<AudioTestRoutes />} />
           </Route>
           <Route
             path="/services/buy-medicines/products/details/:category/:id"
