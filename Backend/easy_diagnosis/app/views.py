@@ -840,3 +840,126 @@ def get_user_cart(request):
     except Exception as e:
         logger.error(f"Error fetching cart: {e}")
         return Response({"error": str(e)}, status=500)
+from .predict_dysarthria import predict_dysarthria_audio_class
+import os
+
+
+class AudioPredictionDysarthriaView(APIView):
+    """
+    API to analyze an audio file and predict disease classification.
+    """
+
+    def post(self, request):
+        # Check if an audio file is provided
+        audio_file = request.FILES.get('audio')
+        if not audio_file:
+            return Response(
+                {"error": "No audio file provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Save the uploaded audio to a temporary location
+            temp_file_path = "temp_audio.wav"
+            with open(temp_file_path, 'wb') as f:
+                for chunk in audio_file.chunks():
+                    f.write(chunk)
+
+            # Run the prediction
+            final_class, model_predictions = predict_dysarthria_audio_class(temp_file_path)
+
+            # Clean up the temporary file
+            os.remove(temp_file_path)
+
+            # Return the result
+            return Response({
+                "message": "Prediction successful.",
+                "final_class": final_class,
+                "model_predictions": model_predictions
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+from .predict_dementia import predict_dementia_audio_class
+class AudioPredictionDementiaView(APIView):
+    """
+    API to analyze an audio file and predict disease classification.
+    """
+
+    def post(self, request):
+        # Check if an audio file is provided
+        audio_file = request.FILES.get('audio')
+        if not audio_file:
+            return Response(
+                {"error": "No audio file provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Save the uploaded audio to a temporary location
+            temp_file_path = "temp_audio.wav"
+            with open(temp_file_path, 'wb') as f:
+                for chunk in audio_file.chunks():
+                    f.write(chunk)
+
+            # Run the prediction
+            final_class, model_predictions = predict_dementia_audio_class(temp_file_path)
+
+            # Clean up the temporary file
+            os.remove(temp_file_path)
+
+            # Return the result
+            return Response({
+                "message": "Prediction successful.",
+                "final_class": final_class,
+                "model_predictions": model_predictions
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+from .predict_parkinson import predict_parkinson_audio_class
+class AudioPredictionParkinsonView(APIView):
+    """
+    API to analyze an audio file and predict disease classification.
+    """
+
+    def post(self, request):
+        # Check if an audio file is provided
+        audio_file = request.FILES.get('audio')
+        if not audio_file:
+            return Response(
+                {"error": "No audio file provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Save the uploaded audio to a temporary location
+            temp_file_path = "temp_audio.wav"
+            with open(temp_file_path, 'wb') as f:
+                for chunk in audio_file.chunks():
+                    f.write(chunk)
+
+            # Run the prediction
+            final_class, model_predictions = predict_parkinson_audio_class(temp_file_path)
+
+            # Clean up the temporary file
+            os.remove(temp_file_path)
+
+            # Return the result
+            return Response({
+                "message": "Prediction successful.",
+                "final_class": final_class,
+                "model_predictions": model_predictions
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
