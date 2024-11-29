@@ -58,10 +58,12 @@ const App = () => {
           <Route path="/products/shopping-cart" element={<ShoppingCart />} />
           <Route path="/hospital/:id" element={<Hospital />} />
           <Route path="/detection" element={<Dectection />} />
-        </Route>
-        <Route path="/login" element={<LoginWrapper />} />
-        <Route path="/signup" element={<SignUpWrapper />} />
-        {/* protected routes */}
+          <Route
+            path="/services/buy-medicines/products/:id"
+            element={<Products />}
+          />
+
+          {/* protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route
             path="/services/online-video-consultation/consult-doctor/doctor-details/:label/:id"
@@ -71,12 +73,11 @@ const App = () => {
             path="/services/buy-medicines/products/shopping-cart"
             element={<ShoppingCart />}
           />
-          <Route
-            path="/services/buy-medicines/products/:id"
-            element={<Products />}
-          />
           {/* add more routes to protect */}
         </Route>
+        </Route>
+        <Route path="/login" element={<LoginWrapper />} />
+        <Route path="/signup" element={<SignUpWrapper />} />
       </Routes>
       <ToastContainer />
     </BrowserRouter>

@@ -72,12 +72,6 @@ const Navbar = () => {
       const [name] = cookie.split("=");
       document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
     });
-
-    // Show notification and navigate to home
-    toast.success("Logged out successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-    });
     navigate("/");
   };
 

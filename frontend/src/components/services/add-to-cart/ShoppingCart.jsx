@@ -1,11 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { getCookie } from "../../Dropdown/Profile/components/utils";
 import { FaMapMarkerAlt, FaTrash } from "react-icons/fa";
 
 const ShoppingCart = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Himalaya Baby Powder 50 g", price: 450, quantity: 1 },
-    { id: 2, name: "Himalaya Baby Powder 50 g", price: 450, quantity: 1 },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      setIsLoading(true);
+      try {
+        const token = getCookie("accessToken");
+
+        if (!token) {
+          setError("No access token found. Please log in.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get("http://127.0.0.1:8000/get-cart/", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Replace <your_token> with a valid token
+          },
+          withCredentials:true,
+        });
+        console.log(response.data)
+        setCartItems(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching cart items:", err);
+        setError("Failed to load cart items. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCartItems();
+  }, []);
 
   const updateQuantity = (id, delta) => {
     setCartItems((items) =>
@@ -22,7 +55,7 @@ const ShoppingCart = () => {
   };
 
   const cartTotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + item.discounted_price * item.quantity,
     0
   );
 
@@ -34,8 +67,29 @@ const ShoppingCart = () => {
   const discount = 15;
   const handlingFee = 4;
   const subsidisedDelivery = 25;
-  const totalSavings = discount + subsidisedDelivery;
   const toPay = cartTotal - discount + handlingFee;
+
+  if (isLoading) {
+    return (
+      <div className="text-center mt-8">
+        <p>Loading cart items...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center mt-8 text-red-600">
+        <p>{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="container p-12">
@@ -68,12 +122,12 @@ const ShoppingCart = () => {
               >
                 <img
                   src="https://via.placeholder.com/50"
-                  alt={item.name}
+                  alt={item.product_name || "Product Image"}
                   className="w-12 h-12 object-cover mr-4"
                 />
                 <div className="flex-1">
-                  <h4 className="font-semibold">{item.name}</h4>
-                  <p>MRP ₹{item.price}</p>
+                  <h4 className="font-semibold">{item.product_name || "Unknown Item"}</h4>
+                  <p>MRP ₹{item.discounted_price || "N/A"}</p>
                   <p>Delivery By: Tomorrow, before 10:00 pm</p>
                 </div>
                 <button
@@ -89,7 +143,7 @@ const ShoppingCart = () => {
                   >
                     -
                   </button>
-                  <span className="mx-2">{item.quantity}</span>
+                  <span className="mx-2">{item.quantity || 1}</span>
                   <button
                     onClick={() => updateQuantity(item.id, 1)}
                     className="border px-2 py-0"
@@ -107,23 +161,6 @@ const ShoppingCart = () => {
           </div>
         </div>
         <div className="w-full lg:w-1/3">
-          <div className="bg-white p-4 rounded-md shadow mb-4 text-[#19456b]">
-            <h3 className="text-2xl font-bold text-[#19456b]">OFFERS & DISCOUNTS</h3>
-            <div className="bg-teal-100 p-3 rounded-md mt-4 text-teal-700">
-              Save ₹111.45 on this order{" "}
-              <button className="text-[#1fab89] underline ml-2">
-                View Plans
-              </button>
-            </div>
-            <div className="border-t mt-4 pt-4">
-              <button className="border w-full p-2 rounded-md mb-2">
-                Apply Coupon
-              </button>
-              <button className="border w-full p-2 rounded-md">
-                Use Health Credits
-              </button>
-            </div>
-          </div>
           <div className="max-w-md mx-auto mt-8 p-4 bg-white shadow-lg rounded-md text-[#19456b]">
             <h3 className="text-2xl font-bold mb-4">CART BREAKDOWN</h3>
             <div className="flex justify-between mb-2">
@@ -138,22 +175,14 @@ const ShoppingCart = () => {
               <span>Handling & Packaging Fee</span>
               <span>Rs. {handlingFee}</span>
             </div>
-            <div className="flex justify-between mb-2">
-              <span>Delivery Charges</span>
-              <button className="text-blue-500 underline">+ Add Address</button>
-            </div>
             <hr className="my-2" />
             <div className="flex justify-between text-lg font-semibold mt-2">
               <span>TO PAY</span>
               <span>Rs. {toPay}</span>
             </div>
-            <div className="flex items-center justify-between bg-[#dbdbdb] p-3 mt-4 rounded-md">
-              <span className="font-semibold">Amount to Pay</span>
-              <span className="text-xl text-[#1fab89] font-bold">₹{toPay}</span>
-              <button className="bg-[#1fab89] text-white px-4 py-2 rounded-md ml-2 font-bold">
-                Checkout
-              </button>
-            </div>
+            <button className="bg-[#1fab89] text-white px-4 py-2 rounded-md w-full mt-4">
+              Checkout
+            </button>
           </div>
         </div>
       </div>
@@ -162,3 +191,153 @@ const ShoppingCart = () => {
 };
 
 export default ShoppingCart;
+
+
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import { getCookie } from "../../Dropdown/Profile/components/utils";
+// import { FaMapMarkerAlt, FaTrash } from "react-icons/fa";
+
+// const ShoppingCart = () => {
+//   const [cartItems, setCartItems] = useState([]);
+//   const [productDetails, setProductDetails] = useState({});
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchCartItems = async () => {
+//       setIsLoading(true);
+//       try {
+//         const token = getCookie("accessToken");
+
+//         if (!token) {
+//           setError("No access token found. Please log in.");
+//           setIsLoading(false);
+//           return;
+//         }
+
+//         const response = await axios.get("http://127.0.0.1:8000/get-cart/", {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//           withCredentials: true,
+//         });
+
+//         const items = response.data;
+//         setCartItems(items);
+//         setError(null);
+
+//         // Fetch product details for each p_id
+//         await Promise.all(
+//           items.map(async (item) => {
+//             const resp = await axios.post(
+//               `http://127.0.0.1:8000/get-category-details?pid=${item.p_id}`,
+//               {
+//                 service: "medicines",
+//                 category: "default-category", // Replace with the actual category if available
+//               }
+//             );
+//             setProductDetails((prev) => ({
+//               ...prev,
+//               [item.p_id]: resp.data[0], // Store product details by p_id
+//             }));
+//           })
+//         );
+//       } catch (err) {
+//         console.error("Error fetching cart items or product details:", err);
+//         setError("Failed to load cart items. Please try again.");
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     fetchCartItems();
+//   }, []);
+
+//   const updateQuantity = (id, delta) => {
+//     setCartItems((items) =>
+//       items.map((item) =>
+//         item.id === id
+//           ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+//           : item
+//       )
+//     );
+//   };
+
+//   const removeItem = (id) => {
+//     setCartItems((items) => items.filter((item) => item.id !== id));
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="text-center mt-8">
+//         <p>Loading cart items...</p>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="text-center mt-8 text-red-600">
+//         <p>{error}</p>
+//         <button
+//           onClick={() => window.location.reload()}
+//           className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+//         >
+//           Retry
+//         </button>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="container p-12">
+//       <h2 className="text-2xl font-bold mb-4 text-[#19456b]">MY CART</h2>
+//       {cartItems.map((item) => {
+//         const details = productDetails[item.p_id] || {};
+//         return (
+//           <div
+//             key={item.id}
+//             className="relative flex items-center border p-4 rounded-md mb-4 bg-[#dbdbdb] text-[#19456b]"
+//           >
+//             <img
+//               src={details.product_image || "https://via.placeholder.com/50"}
+//               alt={details.product_name || "Product Image"}
+//               className="w-12 h-12 object-cover mr-4"
+//             />
+//             <div className="flex-1">
+//               <h4 className="font-semibold">
+//                 {details.product_name || "Unknown Item"}
+//               </h4>
+//               <p>MRP ₹{details.discounted_price || "N/A"}</p>
+//               <p>Delivery By: Tomorrow, before 10:00 pm</p>
+//             </div>
+//             <button
+//               onClick={() => removeItem(item.id)}
+//               className="absolute right-0 top-2 px-4 text-[#1fab89]"
+//             >
+//               <FaTrash />
+//             </button>
+//             <div className="flex items-center border border-1 border-[#19456b]">
+//               <button
+//                 onClick={() => updateQuantity(item.id, -1)}
+//                 className="border px-2 py-0"
+//               >
+//                 -
+//               </button>
+//               <span className="mx-2">{item.quantity || 1}</span>
+//               <button
+//                 onClick={() => updateQuantity(item.id, 1)}
+//                 className="border px-2 py-0"
+//               >
+//                 +
+//               </button>
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// };
+
+// export default ShoppingCart;
