@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import icon from "/Icon.svg"; // Your upload icon
 
-function Upload() {
+function Upload({disease}) {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [audioUrl, setAudioUrl] = useState(""); // State for audio URL
@@ -52,7 +52,7 @@ function Upload() {
 
     try {
       // Send the POST request to the server
-      const response = await fetch("http://127.0.0.1:8000/predict-audio-dysarthria/", {
+      const response = await fetch(`http://127.0.0.1:8000/predict-audio-${disease}/`, {
         method: "POST",
         body: formData,
       });
@@ -73,6 +73,9 @@ function Upload() {
     <>
       {/* Line above the section */}
       <div className="w-full h-[2px] bg-[#E0C9C9] my-2 mt-16"></div>
+      <h1 className="text-2xl font-semibold text-[#19456B] text-center mb-4">
+        Upload Audio for {disease}
+      </h1>
 
       <div className="flex gap-8 items-start justify-around py-12 px-4 flex-wrap">
         {/* Container for Audio Upload Section */}

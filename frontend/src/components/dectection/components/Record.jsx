@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Recorder = () => {
+const Recorder = ({disease}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState([]);
   const [audioUrl, setAudioUrl] = useState(null);
@@ -117,7 +117,7 @@ const Recorder = () => {
         formData.append("audio", audioBlob, "audio.wav");
 
         const response = await fetch(
-          "http://127.0.0.1:8000/predict-audio-dysarthria/",
+          `http://127.0.0.1:8000/predict-audio-${disease}/`,
           {
             method: "POST",
             body: formData,
@@ -148,6 +148,9 @@ const Recorder = () => {
   return (
     <div key={key}>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-2xl font-semibold text-[#19456B] text-center mb-4">
+        Upload Audio for {disease}
+      </h1>
         <div className="w-full max-w-xs p-4 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Audio Recording
