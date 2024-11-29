@@ -137,14 +137,6 @@ function Upload() {
           <h3 className="text-xl font-semibold text-[#19456B] mb-4">Prediction Result</h3>
           <p className="text-md text-[#19456B] mb-2">Message: {prediction.message}</p>
           <p className="text-md text-[#19456B] mb-2">Final Class: {prediction.final_class}</p>
-          <p className="text-md text-[#19456B] mb-2">Model Predictions:</p>
-          <ul className="list-disc pl-5">
-            {prediction.model_predictions.map((prediction, index) => (
-              <li key={index} className="text-md text-[#19456B]">
-                {prediction}
-              </li>
-            ))}
-          </ul>
         </div>
       )}
     </>
