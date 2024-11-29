@@ -136,10 +136,13 @@ const Recorder = () => {
     }
   };
 
-  // Handle reload by resetting key and prediction result
-  const handleReloadComponent = () => {
+  // Reset the component and prediction result for a new recording
+  const handleNewRecording = () => {
     setKey((prevKey) => prevKey + 1); // Change the key to trigger remount
-    setPredictionResult(null); // Reset the prediction result when reloading
+    setAudioChunks([]);
+    setAudioUrl(null);
+    setPredictionResult(null);
+    setIsRecording(false); // Ensure recording is stopped
   };
 
   return (
@@ -157,7 +160,6 @@ const Recorder = () => {
               } else {
                 handleStartRecording();
               }
-              handleReloadComponent(); // Reload component when recording starts
             }}
             className={`px-6 py-3 rounded-lg shadow-lg w-full mb-4 ${
               isRecording ? "bg-red-500" : "bg-green-500"
@@ -202,6 +204,13 @@ const Recorder = () => {
               </p>
             </div>
           )}
+
+          <button
+            onClick={handleNewRecording}
+            className="mt-4 px-6 py-3 rounded-lg bg-green-500 w-full"
+          >
+            Start New Recording
+          </button>
         </div>
       </div>
     </div>
