@@ -20,7 +20,7 @@ import Hospital from "./components/hospital/hospital";
 import Dectection from "./components/dectection/Dectection";
 import DropDownRoutes from "./Routes/DropDownRoutes";
 import Labs from "./components/services/book-lab-test-at-home/labs/Labs";
-import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
+import DoctorDetails from "./components/services/online-video-consultation/doctor-details/DoctorDetails";
 import LoginWrapper from "./Authentication/Login";
 import SignUpWrapper from "./Authentication/SignUp";
 import { ToastContainer } from "react-toastify";
