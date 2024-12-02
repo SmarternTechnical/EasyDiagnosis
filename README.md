@@ -7,6 +7,6 @@ cd backend/easy_diagnosis
 python3 manage.py createsuperuser    
 
 ## Frontend Setup
-cd frontend
-npm i
-npm run dev
+step 1: cd frontend
+step 2: npm i
+step 3: npm run dev
