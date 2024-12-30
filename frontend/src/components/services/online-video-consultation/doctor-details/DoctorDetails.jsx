@@ -1,5 +1,5 @@
 import React from 'react'
-import MainPage from './mainPage'
+import MainPage from './MainPage'
 import { RecoilRoot } from 'recoil'
 
 const DoctorDetails = () => {

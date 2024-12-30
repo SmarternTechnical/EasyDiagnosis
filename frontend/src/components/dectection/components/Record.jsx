@@ -149,7 +149,7 @@ const Recorder = ({disease}) => {
     <div key={key}>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-2xl font-semibold text-[#19456B] text-center mb-4">
-        Upload Audio for {disease}
+        Record Audio for {disease}
       </h1>
         <div className="w-full max-w-xs p-4 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-semibold text-center mb-4">
