@@ -840,7 +840,7 @@ def get_user_cart(request):
     except Exception as e:
         logger.error(f"Error fetching cart: {e}")
         return Response({"error": str(e)}, status=500)
-from .predict_dysarthria import predict_dysarthria_audio_class
+from .mlmodels.predict_dysarthria import predict_dysarthria_audio_class
 import os
 
 
@@ -883,7 +883,7 @@ class AudioPredictionDysarthriaView(APIView):
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-from .predict_dementia import predict_dementia_audio_class
+from .mlmodels.predict_dementia import predict_dementia_audio_class
 class AudioPredictionDementiaView(APIView):
     """
     API to analyze an audio file and predict disease classification.
@@ -923,7 +923,7 @@ class AudioPredictionDementiaView(APIView):
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-from .predict_parkinson import predict_parkinson_audio_class
+from .mlmodels.predict_parkinson import predict_parkinson_audio_class
 class AudioPredictionParkinsonView(APIView):
     """
     API to analyze an audio file and predict disease classification.
@@ -956,6 +956,86 @@ class AudioPredictionParkinsonView(APIView):
                 "message": "Prediction successful.",
                 "final_class": final_class,
                 "model_predictions": model_predictions
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+from .mlmodels.tumor_detection import predict_image_class
+class ImagePredictionTumor(APIView):
+    """
+    API to analyze an image file and predict disease classification.
+    """
+
+    def post(self, request):
+        # Check if an image file is provided
+        image_file = request.FILES.get('image')
+        if not image_file:
+            return Response(
+                {"error": "No image file provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Save the uploaded image to a temporary location
+            temp_file_path = "temp_image.jpg"
+            with open(temp_file_path, 'wb') as f:
+                for chunk in image_file.chunks():
+                    f.write(chunk)
+
+            # Run the prediction
+            final_class, confidence = predict_image_class(temp_file_path)
+
+            # Clean up the temporary file
+            os.remove(temp_file_path)
+
+            # Return the result
+            return Response({
+                "message": "Prediction successful.",
+                "final_class": final_class,
+                "confidence": confidence
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+from .mlmodels.tb_detection import predict_image_class1
+class ImagePredictionTb(APIView):
+    """
+    API to analyze an image file and predict disease classification.
+    """
+
+    def post(self, request):
+        # Check if an image file is provided
+        image_file = request.FILES.get('image')
+        if not image_file:
+            return Response(
+                {"error": "No image file provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Save the uploaded image to a temporary location
+            temp_file_path = "temp_image.jpg"
+            with open(temp_file_path, 'wb') as f:
+                for chunk in image_file.chunks():
+                    f.write(chunk)
+
+            # Run the prediction
+            final_class, confidence = predict_image_class1(temp_file_path)
+
+            # Clean up the temporary file
+            os.remove(temp_file_path)
+
+            # Return the result
+            return Response({
+                "message": "Prediction successful.",
+                "final_class": final_class,
+                "confidence": confidence
             }, status=status.HTTP_200_OK)
 
         except Exception as e:

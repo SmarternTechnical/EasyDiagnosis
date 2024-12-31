@@ -3,7 +3,7 @@ from . import views
 from .views import SignUpView, LoginView, LogoutView,RequestConsultationView,AddUserInfoView,BookHospitalAppointmentView,BookLabTestAppointmentView, ReviewAPI
 from .views import (
     OrderListView, OrderDetailView,UploadCSVView,AddProductView,upload_csv,add_product_to_bill,save_bill,get_all_bills,GetUserInfoView
-    ,questions_api,get_user_cart,AudioPredictionDysarthriaView,AudioPredictionDementiaView,AudioPredictionParkinsonView
+    ,questions_api,get_user_cart,AudioPredictionDysarthriaView,AudioPredictionDementiaView,AudioPredictionParkinsonView,ImagePredictionTumor,ImagePredictionTb
 )
 
 urlpatterns = [
@@ -32,6 +32,8 @@ urlpatterns = [
     path('predict-audio-dysarthria/', AudioPredictionDysarthriaView.as_view(), name='predict-audio'),
     path('predict-audio-dementia/', AudioPredictionDementiaView.as_view(), name='predict-audio'),
     path('predict-audio-parkinson/', AudioPredictionParkinsonView.as_view(), name='predict-audio'),
+    path('predict-image-tumor/', ImagePredictionTumor.as_view(), name='predict-image'),
+    path('predict-image-tb/', ImagePredictionTb.as_view(), name='predict-image'),
 ]
 
 
