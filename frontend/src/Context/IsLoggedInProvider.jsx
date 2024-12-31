@@ -1,15 +1,25 @@
-// IsLoggedInProvider.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import isLoggedInContext from "./IsLoggedInContext";
 
 const IsLoggedInProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    return (
-        <isLoggedInContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-            {children}
-        </isLoggedInContext.Provider>
-    );
+  // Restore isLoggedIn state from localStorage on mount
+  useEffect(() => {
+    const storedLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(storedLoggedIn);
+  }, []);
+
+  // Update localStorage whenever isLoggedIn changes
+  useEffect(() => {
+    localStorage.setItem("isLoggedIn", isLoggedIn);
+  }, [isLoggedIn]);
+
+  return (
+    <isLoggedInContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+      {children}
+    </isLoggedInContext.Provider>
+  );
 };
 
 export default IsLoggedInProvider;

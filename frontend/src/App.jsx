@@ -17,7 +17,7 @@ import ProductViewDetail from "./components/services/products/ProductViewDetail"
 import ShoppingCart from "./components/services/add-to-cart/ShoppingCart";
 import ConsultDoctor from "./components/services/online-video-consultation/consult-doctor/ConsultDoctor";
 import Hospital from "./components/hospital/hospital";
-import Lab from "./components/lab/Lab";
+import Dectection from "./components/dectection/Dectection";
 import DropDownRoutes from "./Routes/DropDownRoutes";
 import Labs from "./components/services/book-lab-test-at-home/labs/Labs";
 import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
@@ -57,11 +57,13 @@ const App = () => {
           <Route path="/services/book-lab-tests/Labs/:id" element={<Labs />} />
           <Route path="/products/shopping-cart" element={<ShoppingCart />} />
           <Route path="/hospital/:id" element={<Hospital />} />
-          <Route path="labs" element={<Lab />} />
-        </Route>
-        <Route path="/login" element={<LoginWrapper />} />
-        <Route path="/signup" element={<SignUpWrapper />} />
-        {/* protected routes */}
+          <Route path="/detection" element={<Dectection />} />
+          <Route
+            path="/services/buy-medicines/products/:id"
+            element={<Products />}
+          />
+
+          {/* protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route
             path="/services/online-video-consultation/consult-doctor/doctor-details/:label/:id"
@@ -71,12 +73,11 @@ const App = () => {
             path="/services/buy-medicines/products/shopping-cart"
             element={<ShoppingCart />}
           />
-          <Route
-            path="/services/buy-medicines/products/:id"
-            element={<Products />}
-          />
           {/* add more routes to protect */}
         </Route>
+        </Route>
+        <Route path="/login" element={<LoginWrapper />} />
+        <Route path="/signup" element={<SignUpWrapper />} />
       </Routes>
       <ToastContainer />
     </BrowserRouter>

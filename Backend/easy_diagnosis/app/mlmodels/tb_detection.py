@@ -2,9 +2,11 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 
-
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, 'app', 'mlmodels',"mlmodelfiles", "tuberculosis_classification_model.h5")
 # Load the trained model
-model = tf.keras.models.load_model("/EasyDiagnosis/Backend/easy_diagnosis/app/mlmodels/mlmodelfiles/tuberculosis_classification_model.h5")
+model = tf.keras.models.load_model(model_path)
 
 # Function to load and preprocess the image
 def preprocess_image(img_path, target_size=(128, 128)):

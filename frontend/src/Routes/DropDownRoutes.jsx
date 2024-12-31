@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import Profile from "../components/Dropdown/Profile";
+import Profile from "../components/Dropdown/Profile/Profile";
 
 const DropDownRoutes = () => {
   return (

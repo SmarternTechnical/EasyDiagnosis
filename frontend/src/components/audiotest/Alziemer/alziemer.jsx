@@ -1,6 +1,10 @@
 import React from 'react';
+import AlziemerTest from './components/AlziemerTest';
+
 function Alziemer() {
-    return ( <div>Alziemer</div> );
+    return ( 
+        <AlziemerTest/>
+     );
 }
 
 export default Alziemer;
