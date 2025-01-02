@@ -3,8 +3,9 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(BASE_DIR, 'app', 'mlmodels',"mlmodelfiles", "tumor_classification_model.h5")
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# model_path = os.path.join(BASE_DIR, 'app', 'mlmodels',"mlmodelfiles", "tumor_classification_model.h5")
+model_path="/home/agrima/Desktop/curr-projects/EasyDiagnosis/Backend/easy_diagnosis/app/mlmodels/mlmodelfiles/tumor_classification_model.h5"
 # Load the trained model
 model = tf.keras.models.load_model(model_path)
 
