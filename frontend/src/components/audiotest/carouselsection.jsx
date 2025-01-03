@@ -29,7 +29,7 @@ const CarouselSection = () => {
     return (
       <div className="flex justify-center">
         <div
-          className={`rounded-2xl h-auto w-full max-w-xs mb-4 overflow-hidden shadow-lg transition-all duration-300 transform cursor-pointer hover:scale-105 ${activeStyle}`}
+          className={`rounded-2xl h-auto w-full max-w-xs mt-2 mb-2 overflow-hidden shadow-lg transition-all duration-300 transform cursor-pointer hover:scale-105 ${activeStyle}`}
           onClick={() => handleCardClick(`/audiotest/${item.name}`)} // Use navigation function
         >
           {/* Image Container */}
@@ -53,12 +53,11 @@ const CarouselSection = () => {
   };
 
   return (
-    <div className={`w-full h-auto bg-[#f3f3f3] p-4 pb-7`}>
-      {/* Carousel Section */}
+
       <div className="w-full mt-3 h-[50%] p-2">
         <Carousel categories={categories} CardComponent={Card} />
       </div>
-    </div>
+
   );
 };
 

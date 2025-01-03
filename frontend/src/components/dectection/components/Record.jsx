@@ -1,6 +1,35 @@
 import React, { useState } from "react";
+import QuestionPopup from "./DetectionQuestions";
 
-const Recorder = () => {
+const Recorder = ({ disease }) => {
+  const questions = [
+    {
+      id: 1,
+      en: "Do you have difficulty making eye contact?",
+      hi: "क्या आपको आँखों से संपर्क बनाने में कठिनाई होती है?",
+    },
+    {
+      id: 2,
+      en: "Do you find it hard to understand social cues?",
+      hi: "क्या आपको सामाजिक संकेत समझने में कठिनाई होती है?",
+    },
+    {
+      id: 3,
+      en: "Do you repeat words or phrases often?",
+      hi: "क्या आप शब्दों या वाक्यांशों को बार-बार दोहराते हैं?",
+    },
+    {
+      id: 4,
+      en: "Do you prefer routines and dislike changes?",
+      hi: "क्या आप दिनचर्या पसंद करते हैं और बदलाव नापसंद करते हैं?",
+    },
+    {
+      id: 5,
+      en: "Do you avoid physical contact?",
+      hi: "क्या आप शारीरिक संपर्क से बचते हैं?",
+    },
+  ];
+
   const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState([]);
   const [audioUrl, setAudioUrl] = useState(null);
@@ -8,7 +37,9 @@ const Recorder = () => {
   const [recorderNode, setRecorderNode] = useState(null);
   const [mediaStream, setMediaStream] = useState(null);
   const [predictionResult, setPredictionResult] = useState(null);
-  const [key, setKey] = useState(0); // Key to force re-render of the component
+  const [key, setKey] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isPopupVisible, setIsPopupVisible] = useState(false); // State for popup visibility
 
   // Start recording
   const handleStartRecording = async () => {
@@ -40,6 +71,8 @@ const Recorder = () => {
       recorder.connect(context.destination);
       console.log("Recording started...");
       setIsRecording(true);
+      setCurrentQuestionIndex(0);
+      setIsPopupVisible(true); // Show the popup when recording starts
     } catch (error) {
       console.error("Error starting recording:", error);
       alert("Error accessing microphone. Please check your device settings.");
@@ -72,6 +105,7 @@ const Recorder = () => {
       setMediaStream(null);
       setRecorderNode(null);
       setIsRecording(false);
+      setCurrentQuestionIndex(0);
     }
   };
 
@@ -117,7 +151,7 @@ const Recorder = () => {
         formData.append("audio", audioBlob, "audio.wav");
 
         const response = await fetch(
-          "http://127.0.0.1:8000/predict-audio-dysarthria/",
+          `http://127.0.0.1:8000/predict-audio-${disease}/`,
           {
             method: "POST",
             body: formData,
@@ -143,11 +177,25 @@ const Recorder = () => {
     setAudioUrl(null);
     setPredictionResult(null);
     setIsRecording(false); // Ensure recording is stopped
+    setIsPopupVisible(false); // Close the popup when starting new recording
+  };
+
+  // Handle popup close action
+  const closePopup = () => {
+    setIsPopupVisible(false); // Close the popup
+  };
+
+  // Handle finishing the quiz
+  const handleFinishQuiz = () => {
+    setIsPopupVisible(false); // Close popup when finishing the quiz
   };
 
   return (
     <div key={key}>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <h1 className="text-2xl font-semibold text-[#19456B] text-center mb-4">
+          Record Audio for {disease}
+        </h1>
         <div className="w-full max-w-xs p-4 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Audio Recording
@@ -213,6 +261,16 @@ const Recorder = () => {
           </button>
         </div>
       </div>
+
+      {isPopupVisible && (
+        <QuestionPopup
+          questions={questions}
+          currentQuestionIndex={currentQuestionIndex}
+          setCurrentQuestionIndex={setCurrentQuestionIndex}
+          handleFinish={handleFinishQuiz}
+          closePopup={closePopup} // Pass closePopup function
+        />
+      )}
     </div>
   );
 };

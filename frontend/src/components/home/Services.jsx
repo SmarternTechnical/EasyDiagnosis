@@ -58,7 +58,7 @@ const Services = ({ heading, subHeading, color, service, category }) => {
     return (
       <div className="flex justify-center">
         <div
-          className={`rounded-2xl h-auto w-full max-w-xs mb-4 overflow-hidden shadow-lg transition-all duration-300 transform cursor-pointer hover:scale-105 ${activeStyle}`}
+          className={`rounded-2xl h-auto w-full mt-2 mb-2 overflow-hidden shadow-lg transition-all duration-300 transform cursor-pointer hover:scale-105 ${activeStyle}`}
           onClick={() => handleCardClick(item.name)} // Use navigation
         >
           {/* Image Container */}

@@ -32,7 +32,7 @@ const ImageData = [
 
 const ImageData2 = [
   { heading: "Autism", route: "/audiotest/autism" },
-  { heading: "Alzheimer", route: "/audiotest/alzheimer" },
+  { heading: "Alzheimer", route: "/audiotest/alziemer" },
 ];
 
 const Navbar = () => {
