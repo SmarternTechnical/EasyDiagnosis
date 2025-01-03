@@ -2,11 +2,20 @@
 
 ## Backend Setup
 pip install django  
-pip install djangorestframework  
-cd backend/easy_diagnosis  
+pip install djangorestframework 
+
+pip install djangorestframework-simplejwt 
+
+pip install django-cors-headers 
+
+cd Backend/easy_diagnosis  
+
 python3 manage.py createsuperuser    
 
+python3 manage.py runserver
+
 ## Frontend Setup
-cd frontend
-npm i
-npm run dev
+step 1: cd frontend                                                                                                                                                                                                                               
+step 2: npm i
+
+step 3: npm run dev
