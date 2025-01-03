@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from "react";
 import QuestionPopup from "./QuestionPopup.jsx";
 import { useAudioRecorder } from "../../hooks/useAudioRecorder.js";
-import axios from "axios";  // Import axios
+import axios from "axios"; // Import axios
 
 function AlzheimerTest() {
-  const [questions, setQuestions] = useState([]); // Initialize as an array
+  const [questions, setQuestions] = useState([]); // Initialize questions as an empty array
   const [currentCategory, setCurrentCategory] = useState("Alzheimer_GDS"); // Default category
-  const [isTestStarted, setIsTestStarted] = useState(false);
-  const [isRecordingDownloaded, setIsRecordingDownloaded] = useState(false); // To show feedback to the user
-  const { startRecording, stopRecording, recordedAudioUrl } = useAudioRecorder();
+  const [isTestStarted, setIsTestStarted] = useState(false); // Control if test has started
+  const [isRecordingDownloaded, setIsRecordingDownloaded] = useState(false); // For feedback after download
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // Control popup visibility
+  const { startRecording, stopRecording, recordedAudioUrl } =
+    useAudioRecorder();
 
   useEffect(() => {
     // Fetch questions from API using axios
     const fetchQuestions = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/questions/");
-        // Check if it's an array and set it
         if (Array.isArray(response.data.questions)) {
           setQuestions(response.data.questions); // Set the array of questions directly
+          console.log("Fetched questions:", response.data.questions); // Log fetched questions for debugging
         } else {
-          console.error("Questions data is not in expected format");
+          console.error("Questions data is not in the expected format");
         }
       } catch (error) {
         console.error("Error fetching questions:", error);
@@ -30,15 +32,15 @@ function AlzheimerTest() {
   }, []);
 
   const handleStart = async () => {
-    setIsTestStarted(true);
+    setIsTestStarted(true); // Start the test
     setIsRecordingDownloaded(false); // Reset download state for a new test
     await startRecording(); // Start recording
+    setIsPopupOpen(true); // Open the popup when the test starts
   };
 
   const handleFinish = () => {
     stopRecording(); // Stop recording
-    setIsTestStarted(false);
-    setCurrentCategory("Alzheimer_GDS"); // Reset to the first category
+    setIsPopupOpen(false); // Close the popup when test finishes
   };
 
   // Trigger download when recordedAudioUrl is updated
@@ -46,7 +48,9 @@ function AlzheimerTest() {
     if (recordedAudioUrl) {
       const anchor = document.createElement("a");
       anchor.href = recordedAudioUrl;
-      anchor.download = `test-recording-${new Date().toISOString().replace(/[:.]/g, "-")}.wav`;
+      anchor.download = `test-recording-${new Date()
+        .toISOString()
+        .replace(/[:.]/g, "-")}.wav`;
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
@@ -54,15 +58,27 @@ function AlzheimerTest() {
     }
   }, [recordedAudioUrl]);
 
+  // Close the popup (when called from the popup itself)
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    if (isRecordingDownloaded) {
+      setIsTestStarted(false); // Reset test state to show start button again
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      {!isTestStarted && (
+    <div
+      className={`flex flex-col items-center justify-center min-h-screen bg-gray-100 ${
+        isPopupOpen ? "fixed inset-0 overflow-hidden" : ""
+      }`}
+    >
+      {(!isTestStarted || isRecordingDownloaded) && (
         <>
           <button
             onClick={handleStart}
             className="px-6 py-3 bg-[#1fab89] text-white rounded-lg shadow-lg hover:bg-[#159770]"
           >
-            Start Test
+            {isRecordingDownloaded ? "Start New Test" : "Start Test"}
           </button>
           {isRecordingDownloaded && (
             <p className="mt-4 text-green-600 font-semibold">
@@ -71,13 +87,13 @@ function AlzheimerTest() {
           )}
         </>
       )}
-
-      {isTestStarted && (
+      {isTestStarted && isPopupOpen && (
         <QuestionPopup
-          questions={questions}  // Pass filtered questions
+          questions={questions}
           setCurrentCategory={setCurrentCategory}
           currentCategory={currentCategory}
           handleFinish={handleFinish}
+          handleClose={handleClosePopup}
         />
       )}
     </div>
