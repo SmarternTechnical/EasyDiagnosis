@@ -3,7 +3,7 @@ from . import views
 from .views import SignUpView, LoginView, LogoutView,RequestConsultationView,AddUserInfoView,BookHospitalAppointmentView,BookLabTestAppointmentView, ReviewAPI
 from .views import (
     OrderListView, OrderDetailView,UploadCSVView,AddProductView,upload_csv,add_product_to_bill,save_bill,get_all_bills,GetUserInfoView
-    ,questions_api,get_user_cart,AudioPredictionDysarthriaView,AudioPredictionDementiaView,AudioPredictionParkinsonView,ImagePredictionTumor,ImagePredictionTb
+    ,questions_api,get_user_cart,AudioPredictionDysarthriaView,AudioPredictionDementiaView,AudioPredictionParkinsonView,ImagePredictionTumor,ImagePredictionTb,UpdateUserInfoView
 )
 
 urlpatterns = [
@@ -14,6 +14,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('add-user-info/', AddUserInfoView.as_view(), name='add-user-info'),
+    path('update-user-info/', UpdateUserInfoView.as_view(), name='add-user-info'),
     path('request-consultation/', RequestConsultationView.as_view(), name='request-consultation'),
     path('book-hospital-appointment/', BookHospitalAppointmentView.as_view(), name='book_hospital_appointment'),
     path('book-labtest/', BookLabTestAppointmentView.as_view(), name='book-labtest'),
@@ -34,6 +35,7 @@ urlpatterns = [
     path('predict-audio-parkinson/', AudioPredictionParkinsonView.as_view(), name='predict-audio'),
     path('predict-image-tumor/', ImagePredictionTumor.as_view(), name='predict-image'),
     path('predict-image-tb/', ImagePredictionTb.as_view(), name='predict-image'),
+    
 ]
 
 

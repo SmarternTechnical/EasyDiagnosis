@@ -1043,3 +1043,19 @@ class ImagePredictionTb(APIView):
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+from django.shortcuts import get_object_or_404
+class UpdateUserInfoView(APIView):
+
+    def put(self, request):
+        # Get the logged-in user's UserAccount instance
+        user_account = request.user
+
+        # Retrieve the UserInfo instance for the logged-in user
+        user_info = get_object_or_404(UserInfo, user_account=user_account)
+
+        # Update the UserInfo instance with the data provided
+        serializer = UserInfoSerializer(user_info, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User information updated successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
