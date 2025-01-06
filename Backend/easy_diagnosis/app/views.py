@@ -814,32 +814,81 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def get_user_cart(request):
+#     try:
+#         user_id = request.user.id
+#         logger.debug(f"Fetching cart for user_id: {user_id}")
+
+#         cart_items = Cart.objects.filter(user_id=user_id)
+#         if not cart_items.exists():
+#             logger.debug(f"No cart items found for user_id: {user_id}")
+#             return Response({"cart": []}, status=200)
+
+#         cart_data = [
+#             {
+#                 "id": item.id,
+#                 "user_id": str(item.user_id),
+#                 "p_id": item.p_id,
+#                 "item_count": item.item_count,
+#             }
+#             for item in cart_items
+#         ]
+#         return Response(cart_data, status=200)
+
+#     except Exception as e:
+#         logger.error(f"Error fetching cart: {e}")
+#         return Response({"error": str(e)}, status=500)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_cart(request):
     try:
         user_id = request.user.id
-        logger.debug(f"Fetching cart for user_id: {user_id}")
 
+        # Fetch all cart items for the user
         cart_items = Cart.objects.filter(user_id=user_id)
         if not cart_items.exists():
-            logger.debug(f"No cart items found for user_id: {user_id}")
             return Response({"cart": []}, status=200)
 
-        cart_data = [
-            {
-                "id": item.id,
-                "user_id": str(item.user_id),
-                "p_id": item.p_id,
-                "item_count": item.item_count,
-            }
-            for item in cart_items
-        ]
+        # Build the cart details with detailed product information
+        cart_data = []
+        for item in cart_items:
+            try:
+                # Fetch product details from PharmaSupport
+                product = PharmaSupport.objects.get(id=item.p_id)
+                cart_data.append({
+                    "id": item.id,
+                    "p_id": item.p_id,
+                    "user_id": str(item.user_id),
+                    "product_name": product.product_name,
+                    "item_count": item.item_count,
+                    "category": product.category,
+                    "product_image": product.product_image,
+                    "actual_product_price": product.actual_product_price,
+                    "discounted_price": product.discounted_price,
+                    "discount_percentage": product.discount_percentage,
+                    "product_link": product.product_link,
+                    "description": product.description,
+                })
+            except PharmaSupport.DoesNotExist:
+                # Handle missing product details gracefully
+                cart_data.append({
+                    "id": item.p_id,
+                    "product_name": "Product not found",
+                    "item_count": item.item_count,
+                })
+
+        # Return the enriched cart data
         return Response(cart_data, status=200)
 
     except Exception as e:
-        logger.error(f"Error fetching cart: {e}")
         return Response({"error": str(e)}, status=500)
+
+    
+
+
 from .mlmodels.predict_dysarthria import predict_dysarthria_audio_class
 import os
 
