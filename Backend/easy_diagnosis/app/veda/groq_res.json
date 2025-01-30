@@ -1,0 +1,8 @@
+{
+    "disease": "Viral Fever",
+    "description": "You are likely suffering from a viral infection, which is causing your fever. I've prescribed some medications to help alleviate your symptoms. Please note that if your condition worsens or persists, you should revisit me for further evaluation.",
+    "medicines": "Paracetamol, Azithromycin, Cetrizine",
+    "Test_suggestions": "Complete Blood Count (CBC), Blood Culture",
+    "precautions": "Drink plenty of fluids, get adequate rest, avoid strenuous activities, and maintain good hygiene to prevent the spread of infection",
+    "language": "english"
+}

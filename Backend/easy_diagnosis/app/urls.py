@@ -5,6 +5,9 @@ from .views import (
     OrderListView, OrderDetailView,UploadCSVView,AddProductView,upload_csv,add_product_to_bill,save_bill,get_all_bills,GetUserInfoView
     ,questions_api,get_user_cart,AudioPredictionDysarthriaView,AudioPredictionDementiaView,AudioPredictionParkinsonView,ImagePredictionTumor,ImagePredictionTb,UpdateUserInfoView
 )
+from .views import start_conversation, stop_conversation
+
+
 
 urlpatterns = [
     # path('', views.home, name='home'),
@@ -35,6 +38,8 @@ urlpatterns = [
     path('predict-audio-parkinson/', AudioPredictionParkinsonView.as_view(), name='predict-audio'),
     path('predict-image-tumor/', ImagePredictionTumor.as_view(), name='predict-image'),
     path('predict-image-tb/', ImagePredictionTb.as_view(), name='predict-image'),
+    path("start/", start_conversation, name="start_conversation"),
+    path("stop/", stop_conversation, name="stop_conversation"),
     
 ]
 

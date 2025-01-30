@@ -27,9 +27,18 @@ class PharmaSupport(models.Model):
         return self.product_name
     
 class UserAccount(AbstractUser):
+    ROLE_CHOICES = [
+        ('patient', 'Patient'),
+        ('chemist', 'Chemist'),
+        ('lab', 'Lab'),
+        ('hospital', 'Hospital'),
+        ('doctor', 'Doctor'),
+    ]
+
     user_id = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
     email = models.EmailField(unique=True, blank=False, null=False)
     username = models.CharField(max_length=150, unique=True, blank=True, null=True)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES, blank=False, null=False)
 
     def save(self, *args, **kwargs):
         if not self.username:
@@ -37,7 +46,8 @@ class UserAccount(AbstractUser):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.email
+        return f"{self.email} ({self.role})"
+
 
 
 class Doctors(models.Model):
@@ -296,3 +306,4 @@ class Question(models.Model):
 
     def _str_(self):
         return f"{self.sr_no} - {self.category}"
+    

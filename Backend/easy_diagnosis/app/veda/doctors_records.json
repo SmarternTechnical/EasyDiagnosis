@@ -1,0 +1,702 @@
+[
+    {
+        "department": "General",
+        "doctor_name": "Dr. Priya",
+        "fees": "323 Rs",
+        "distance_from_you": "6.7 km",
+        "reviews": 3
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Priya",
+        "fees": "581 Rs",
+        "distance_from_you": "9.2 km",
+        "reviews": 1
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Kavita",
+        "fees": "802 Rs",
+        "distance_from_you": "6.0 km",
+        "reviews": 5
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Akash",
+        "fees": "291 Rs",
+        "distance_from_you": "9.6 km",
+        "reviews": 5
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Anant",
+        "fees": "650 Rs",
+        "distance_from_you": "1.9 km",
+        "reviews": 4
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Akash",
+        "fees": "920 Rs",
+        "distance_from_you": "8.1 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Akash",
+        "fees": "667 Rs",
+        "distance_from_you": "4.1 km",
+        "reviews": 1
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "265 Rs",
+        "distance_from_you": "6.0 km",
+        "reviews": 5
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Priya",
+        "fees": "153 Rs",
+        "distance_from_you": "5.6 km",
+        "reviews": 5
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Anant",
+        "fees": "230 Rs",
+        "distance_from_you": "2.5 km",
+        "reviews": 1
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "352 Rs",
+        "distance_from_you": "7.6 km",
+        "reviews": 5
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Akash",
+        "fees": "362 Rs",
+        "distance_from_you": "8.4 km",
+        "reviews": 1
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Kavita",
+        "fees": "307 Rs",
+        "distance_from_you": "7.5 km",
+        "reviews": 2
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Mohan",
+        "fees": "733 Rs",
+        "distance_from_you": "9.6 km",
+        "reviews": 5
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Akash",
+        "fees": "230 Rs",
+        "distance_from_you": "6.9 km",
+        "reviews": 3
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Sneha",
+        "fees": "316 Rs",
+        "distance_from_you": "2.4 km",
+        "reviews": 2
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "398 Rs",
+        "distance_from_you": "9.9 km",
+        "reviews": 4
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Pooja",
+        "fees": "284 Rs",
+        "distance_from_you": "3.8 km",
+        "reviews": 2
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Priya",
+        "fees": "445 Rs",
+        "distance_from_you": "9.5 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Kavita",
+        "fees": "316 Rs",
+        "distance_from_you": "8.0 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "783 Rs",
+        "distance_from_you": "7.7 km",
+        "reviews": 4
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "271 Rs",
+        "distance_from_you": "3.7 km",
+        "reviews": 2
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "213 Rs",
+        "distance_from_you": "6.8 km",
+        "reviews": 2
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Akash",
+        "fees": "658 Rs",
+        "distance_from_you": "3.2 km",
+        "reviews": 3
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Rahul",
+        "fees": "475 Rs",
+        "distance_from_you": "1.9 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Mohan",
+        "fees": "289 Rs",
+        "distance_from_you": "5.2 km",
+        "reviews": 4
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Priya",
+        "fees": "375 Rs",
+        "distance_from_you": "2.2 km",
+        "reviews": 5
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Pooja",
+        "fees": "655 Rs",
+        "distance_from_you": "9.5 km",
+        "reviews": 4
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Rahul",
+        "fees": "995 Rs",
+        "distance_from_you": "8.4 km",
+        "reviews": 1
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Priya",
+        "fees": "558 Rs",
+        "distance_from_you": "4.2 km",
+        "reviews": 2
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Neha",
+        "fees": "415 Rs",
+        "distance_from_you": "8.0 km",
+        "reviews": 3
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "513 Rs",
+        "distance_from_you": "1.1 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Mohan",
+        "fees": "374 Rs",
+        "distance_from_you": "8.9 km",
+        "reviews": 5
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Kavita",
+        "fees": "944 Rs",
+        "distance_from_you": "8.2 km",
+        "reviews": 2
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Mohan",
+        "fees": "784 Rs",
+        "distance_from_you": "8.8 km",
+        "reviews": 1
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Neha",
+        "fees": "502 Rs",
+        "distance_from_you": "4.9 km",
+        "reviews": 1
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Priya",
+        "fees": "987 Rs",
+        "distance_from_you": "5.9 km",
+        "reviews": 4
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Priya",
+        "fees": "958 Rs",
+        "distance_from_you": "9.5 km",
+        "reviews": 1
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "654 Rs",
+        "distance_from_you": "7.1 km",
+        "reviews": 5
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Pooja",
+        "fees": "115 Rs",
+        "distance_from_you": "3.2 km",
+        "reviews": 3
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Akash",
+        "fees": "496 Rs",
+        "distance_from_you": "6.3 km",
+        "reviews": 2
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Priya",
+        "fees": "692 Rs",
+        "distance_from_you": "5.0 km",
+        "reviews": 3
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Priya",
+        "fees": "552 Rs",
+        "distance_from_you": "5.2 km",
+        "reviews": 2
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Priya",
+        "fees": "521 Rs",
+        "distance_from_you": "2.7 km",
+        "reviews": 1
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Akash",
+        "fees": "742 Rs",
+        "distance_from_you": "3.8 km",
+        "reviews": 4
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Akash",
+        "fees": "434 Rs",
+        "distance_from_you": "8.9 km",
+        "reviews": 4
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Neha",
+        "fees": "610 Rs",
+        "distance_from_you": "7.2 km",
+        "reviews": 5
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Akash",
+        "fees": "746 Rs",
+        "distance_from_you": "5.0 km",
+        "reviews": 1
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Rahul",
+        "fees": "155 Rs",
+        "distance_from_you": "1.7 km",
+        "reviews": 1
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Kavita",
+        "fees": "851 Rs",
+        "distance_from_you": "6.3 km",
+        "reviews": 3
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Rahul",
+        "fees": "117 Rs",
+        "distance_from_you": "5.6 km",
+        "reviews": 4
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "933 Rs",
+        "distance_from_you": "4.6 km",
+        "reviews": 2
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Sneha",
+        "fees": "453 Rs",
+        "distance_from_you": "9.6 km",
+        "reviews": 1
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Mohan",
+        "fees": "297 Rs",
+        "distance_from_you": "5.5 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Anant",
+        "fees": "778 Rs",
+        "distance_from_you": "5.7 km",
+        "reviews": 5
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Priya",
+        "fees": "667 Rs",
+        "distance_from_you": "7.8 km",
+        "reviews": 5
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Sneha",
+        "fees": "368 Rs",
+        "distance_from_you": "2.2 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Kavita",
+        "fees": "242 Rs",
+        "distance_from_you": "9.1 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Neha",
+        "fees": "531 Rs",
+        "distance_from_you": "5.4 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Kavita",
+        "fees": "518 Rs",
+        "distance_from_you": "9.5 km",
+        "reviews": 2
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "996 Rs",
+        "distance_from_you": "6.3 km",
+        "reviews": 1
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Akash",
+        "fees": "153 Rs",
+        "distance_from_you": "6.8 km",
+        "reviews": 1
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Akash",
+        "fees": "128 Rs",
+        "distance_from_you": "0.9 km",
+        "reviews": 1
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Mohan",
+        "fees": "564 Rs",
+        "distance_from_you": "8.9 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Pooja",
+        "fees": "276 Rs",
+        "distance_from_you": "8.9 km",
+        "reviews": 4
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Priya",
+        "fees": "857 Rs",
+        "distance_from_you": "9.8 km",
+        "reviews": 5
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Rahul",
+        "fees": "725 Rs",
+        "distance_from_you": "5.5 km",
+        "reviews": 3
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Sneha",
+        "fees": "996 Rs",
+        "distance_from_you": "0.9 km",
+        "reviews": 3
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Priya",
+        "fees": "757 Rs",
+        "distance_from_you": "7.3 km",
+        "reviews": 3
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Kavita",
+        "fees": "164 Rs",
+        "distance_from_you": "8.2 km",
+        "reviews": 4
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Rahul",
+        "fees": "791 Rs",
+        "distance_from_you": "3.2 km",
+        "reviews": 1
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Akash",
+        "fees": "931 Rs",
+        "distance_from_you": "2.1 km",
+        "reviews": 3
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Kavita",
+        "fees": "803 Rs",
+        "distance_from_you": "1.3 km",
+        "reviews": 4
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Priya",
+        "fees": "259 Rs",
+        "distance_from_you": "9.4 km",
+        "reviews": 5
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Priya",
+        "fees": "321 Rs",
+        "distance_from_you": "4.1 km",
+        "reviews": 5
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Priya",
+        "fees": "520 Rs",
+        "distance_from_you": "4.6 km",
+        "reviews": 1
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Akash",
+        "fees": "724 Rs",
+        "distance_from_you": "8.2 km",
+        "reviews": 2
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Rahul",
+        "fees": "743 Rs",
+        "distance_from_you": "4.2 km",
+        "reviews": 4
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Mohan",
+        "fees": "973 Rs",
+        "distance_from_you": "5.7 km",
+        "reviews": 5
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Akash",
+        "fees": "672 Rs",
+        "distance_from_you": "1.0 km",
+        "reviews": 4
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Priya",
+        "fees": "880 Rs",
+        "distance_from_you": "3.6 km",
+        "reviews": 5
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Neha",
+        "fees": "437 Rs",
+        "distance_from_you": "8.3 km",
+        "reviews": 4
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Neha",
+        "fees": "437 Rs",
+        "distance_from_you": "3.2 km",
+        "reviews": 2
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Rahul",
+        "fees": "637 Rs",
+        "distance_from_you": "7.8 km",
+        "reviews": 1
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Sneha",
+        "fees": "375 Rs",
+        "distance_from_you": "1.4 km",
+        "reviews": 3
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Sneha",
+        "fees": "530 Rs",
+        "distance_from_you": "0.6 km",
+        "reviews": 3
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Kavita",
+        "fees": "683 Rs",
+        "distance_from_you": "7.6 km",
+        "reviews": 2
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Pooja",
+        "fees": "743 Rs",
+        "distance_from_you": "8.3 km",
+        "reviews": 1
+    },
+    {
+        "department": "ENT",
+        "doctor_name": "Dr. Pooja",
+        "fees": "464 Rs",
+        "distance_from_you": "9.5 km",
+        "reviews": 5
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Rahul",
+        "fees": "842 Rs",
+        "distance_from_you": "1.6 km",
+        "reviews": 1
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "697 Rs",
+        "distance_from_you": "4.6 km",
+        "reviews": 2
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Priya",
+        "fees": "719 Rs",
+        "distance_from_you": "1.9 km",
+        "reviews": 4
+    },
+    {
+        "department": "Surgeon",
+        "doctor_name": "Dr. Pooja",
+        "fees": "996 Rs",
+        "distance_from_you": "0.6 km",
+        "reviews": 5
+    },
+    {
+        "department": "Dentist",
+        "doctor_name": "Dr. Ramesh",
+        "fees": "100 Rs",
+        "distance_from_you": "2.3 km",
+        "reviews": 4
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Priya",
+        "fees": "811 Rs",
+        "distance_from_you": "1.8 km",
+        "reviews": 5
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Neha",
+        "fees": "797 Rs",
+        "distance_from_you": "3.8 km",
+        "reviews": 3
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Akash",
+        "fees": "701 Rs",
+        "distance_from_you": "4.3 km",
+        "reviews": 1
+    },
+    {
+        "department": "Physiotherapist",
+        "doctor_name": "Dr. Mohan",
+        "fees": "106 Rs",
+        "distance_from_you": "8.5 km",
+        "reviews": 4
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Pooja",
+        "fees": "990 Rs",
+        "distance_from_you": "1.2 km",
+        "reviews": 1
+    },
+    {
+        "department": "General",
+        "doctor_name": "Dr. Kavita",
+        "fees": "508 Rs",
+        "distance_from_you": "1.5 km",
+        "reviews": 1
+    }
+]

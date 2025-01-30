@@ -37,7 +37,8 @@ class SignUpView(APIView):
             user_account = serializer.save()
             return Response({
                 "message": "Account has been created",
-                "user_id": user_account.user_id
+                "user_id": user_account.user_id,
+                "role": user_account.role
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -64,6 +65,7 @@ class LoginView(APIView):
         return Response({
             "message": "Login successful",
             "user_id": user.user_id,
+            "role": user.role,
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh)
         }, status=status.HTTP_200_OK)
@@ -1108,3 +1110,30 @@ class UpdateUserInfoView(APIView):
             serializer.save()
             return Response({"message": "User information updated successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+import subprocess
+from django.http import JsonResponse
+
+process = None  # Global variable to track the running process
+
+
+@csrf_exempt
+def start_conversation(request):
+    global process
+    if request.method == "POST":
+        if process is None:  # Ensure only one instance is running
+            process = subprocess.Popen(["python3", "main.py"])
+            return JsonResponse({"message": "Conversation started."})
+        return JsonResponse({"message": "Already running."}, status=400)
+    return JsonResponse({"error": "Invalid request."}, status=400)
+
+@csrf_exempt
+def stop_conversation(request):
+    global process
+    if request.method == "POST":
+        if process:
+            process.terminate()  # Stop the running process
+            process = None
+            return JsonResponse({"message": "Conversation stopped."})
+        return JsonResponse({"message": "No conversation running."}, status=400)
+    return JsonResponse({"error": "Invalid request."}, status=400)
