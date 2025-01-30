@@ -1113,11 +1113,11 @@ class UpdateUserInfoView(APIView):
 
 import subprocess
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 process = None  # Global variable to track the running process
 
-
-@csrf_exempt
+@csrf_exempt  # Exempt CSRF protection
 def start_conversation(request):
     global process
     if request.method == "POST":
@@ -1127,7 +1127,7 @@ def start_conversation(request):
         return JsonResponse({"message": "Already running."}, status=400)
     return JsonResponse({"error": "Invalid request."}, status=400)
 
-@csrf_exempt
+@csrf_exempt  # Exempt CSRF protection
 def stop_conversation(request):
     global process
     if request.method == "POST":
