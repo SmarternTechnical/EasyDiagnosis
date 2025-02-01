@@ -1,25 +1,30 @@
 import React from "react";
 import SearchSection from "../services/online-video-consultation/consult-doctor/SearchSection";
-import ProductGrid from "./ProductGrid"
+import ProductGrid from "./ProductGrid";
 import ShopByCategory from "./ShopByCategory";
 import { useParams } from "react-router-dom";
 
 const Hospital = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <div className="w-3/4 mt-10">
         <SearchSection
-          heading="Hospitals"
+          heading="Select a Hospital to View or Manage Details"
+          subheading="Browse through the list of registered hospitals. Search, filter, or select a hospital to access 
+            detailed information, manage resources, and update records."
           cityOptions={["Delhi", "Mumbai", "Bangalore"]}
         />
       </div>
       <div className="w-full mt-10">
-        <ShopByCategory service="medical_services"
-          category="Search for Hospitals" id={id}/>
+        <ShopByCategory
+          service="medical_services"
+          category="Search for Hospitals"
+          id={id}
+        />
       </div>
       <div className="w-3/5 mt-10">
-        <ProductGrid category={id}/>
+        <ProductGrid category={id} />
       </div>
     </div>
   );

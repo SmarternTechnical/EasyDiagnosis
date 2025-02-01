@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ProductCard from './ProductCard';
+import ProductCard from './DetailsCard';
 import axios from 'axios';
 
 // Product Grid Component

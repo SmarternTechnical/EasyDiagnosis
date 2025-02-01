@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, Star } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
 const ProductCard = ({
   image,
   name,
@@ -12,24 +11,24 @@ const ProductCard = ({
 }) => {
   const [lengthMore, setLengthMore] = useState(false);
   const [finalSpec, setFinalSpec] = useState(specialities);
-  const [len, setLen] = useState(0);
+  const [len, setLen] = useState(0); // Use state to store `len`
 
   useEffect(() => {
     const specArray = specialities.split(", ");
     if (specArray.length > 2) {
       setLengthMore(true);
       setFinalSpec(specArray.slice(0, 1).join(", ") + ", " + specArray[1]);
-      setLen(specArray.length - 2);
+      setLen(specArray.length - 2); // Update `len` state
     } else {
       setLengthMore(false);
       setFinalSpec(specialities);
-      setLen(0);
+      setLen(0); // Set len to 0 when there are no extra items
     }
   }, [specialities]);
 
   return (
     <div className="relative bg-white rounded-2xl shadow-md overflow-hidden w-full max-w-[250px] font-inter">
-      {/* Product Image */}
+      {/* Product Image with BOOKED Tag */}
       <div className="relative flex justify-center">
         <img
           src={`/${image}`}
@@ -65,21 +64,6 @@ const ProductCard = ({
           {category}
         </div>
       </div>
-
-      {/* Navigating to Hospital Details Page */}
-      <NavLink
-        to={{
-          pathname: `/hospital/details/${category}`,
-          search: `?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}`,
-        }}
-        className={({ isActive }) =>
-          isActive ? "text-[#1fab89] font-bold" : "text-gray-600"
-        }
-      >
-        <button className="w-full bg-[#FFD43C] text-white py-2 text-sm font-medium rounded-b-lg shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-50">
-          VIEW DETAILS
-        </button>
-      </NavLink>
     </div>
   );
 };

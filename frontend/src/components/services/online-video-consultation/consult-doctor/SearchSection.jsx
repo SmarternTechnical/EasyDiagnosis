@@ -1,13 +1,15 @@
 import React from "react";
 import { Search, MapPin } from "lucide-react";
 
-const SearchSection = ({ heading, cityOptions }) => {
+const SearchSection = ({ heading, cityOptions, subheading }) => {
   return (
     <div>
       <h1 className="font-inter text-4xl font-bold tracking-tight text-center text-[#19456B] w-full mt-4 mb-4">
         {heading}
       </h1>
-
+      <h4 className="font-inter text-xl font-bold tracking-tight text-center text-[#5D5D5D] w-full mt-4 mb-4">
+        {subheading}
+      </h4>
       <div className="w-full p-4">
         <div className="max-w-7xl mx-auto">
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
@@ -26,7 +28,7 @@ const SearchSection = ({ heading, cityOptions }) => {
                 </div>
 
                 {/* Search Input */}
-                <div className="relative w-full ">
+                <div className="relative w-full">
                   <input
                     type="text"
                     placeholder="Search for medicines, health care products, labs and more"

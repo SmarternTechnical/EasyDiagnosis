@@ -23,6 +23,7 @@ import Labs from "./components/services/book-lab-test-at-home/labs/Labs";
 import DoctorDetails from "./components/services/online-video-consultation/doctor details/DoctorDetails";
 import LoginWrapper from "./Authentication/Login";
 import SignUpWrapper from "./Authentication/SignUp";
+import HospitalDetails from "./components/hospital/Details/Details";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
@@ -62,7 +63,7 @@ const App = () => {
             path="/services/buy-medicines/products/:id"
             element={<Products />}
           />
-
+          <Route path="/hospital/details/:id" element={<HospitalDetails/>}/>
           {/* protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route

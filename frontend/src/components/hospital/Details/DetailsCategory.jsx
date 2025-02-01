@@ -69,7 +69,7 @@ const ShopByCategory = ({ category, service, id }) => {
     // Corrected onClick handler with page reload
     const handleOnClick = () => {      
       // Navigate and reload the page
-      navigate(`/hospital/${categoryy.name}`, {
+      navigate(`/hospital/details/${categoryy.name}`, {
         state: { 
           categoryDetails: categoryy,
           service: service 
